@@ -1,7 +1,7 @@
 # Project: Exploding Kitten
 
 ## Contributors
-Dr. Yiji Zhang
+Dr. Yiji Zhang, Winnie Vallonia Nna
 
 ## Dependencies
 - JDK 11

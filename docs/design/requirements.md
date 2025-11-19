@@ -103,7 +103,7 @@
 **Trigger:**
 - During their turn, the Active Player chooses to play a SKIP card from their hand.
 
-**Main Success Scenario:**
+
 1. The Game System shows it is the Active Player’s turn and prompts: “Do you want to end your turn? 1. Yes 2. No.”
 2. The Active Player chooses No, then chooses to play a single card and selects the index corresponding to SKIP.
 3. The Game System verifies SKIP can be played.
@@ -123,3 +123,38 @@
 **Exception Flows:**
 - **S1: Invalid play**
     - If the Player tries to play SKIP in an invalid state (e.g., after already drawing), the Game System rejects the action, shows an error, and leaves the card in the Player’s hand.
+
+### Use Case 4 – Play SEE_THE_FUTURE
+
+**Name:** Play SEE_THE_FUTURE  
+**Primary Actor:** Active Player  
+**Goal:** Allow the player to privately view the top few cards of the draw pile in order, without changing their order.
+
+**Preconditions:**
+- A game is in progress.
+- It is the Active Player’s turn.
+- The Active Player has at least one SEE_THE_FUTURE card in their hand.
+- The draw pile contains at least one card.
+
+**Trigger:**
+- During their turn, the Active Player chooses to play a SEE_THE_FUTURE card from their hand.
+
+1. The Game System shows it is the Active Player’s turn and their hand.
+2. The Active Player chooses not to end the turn and opts to play a single card.
+3. The Active Player selects the index corresponding to SEE_THE_FUTURE.
+4. The Game System verifies the card can be played, removes SEE_THE_FUTURE from the Player’s hand, and places it in the discard pile.
+5. The Game System looks at the top N cards of the draw pile.
+6. The Game System displays these top N cards only to the Active Player, in order from top-most to next.
+7. The Game System returns the cards to the top of the draw pile in the same order.
+8. The Active Player’s turn continues; they may now use that knowledge to decide whether to play another card or end their turn and draw.
+
+**Postconditions:**
+- SEE_THE_FUTURE is in the discard pile.
+- The Active Player knows the identities and order of the next N top cards.
+- The draw pile order is unchanged relative to before the peek.
+
+**Exception Flows:**
+- **F1: Fewer than N cards remain in the deck**
+    - The Game System reveals as many cards as exist (e.g., 1 or 2) and clearly explains that fewer than N were available.
+- **F2: Invalid index / input**
+    - If the Player enters an invalid card index or menu option, the Game System prints “Invalid input. Please try again.” and re-prompts.

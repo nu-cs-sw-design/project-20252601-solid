@@ -89,3 +89,37 @@
 - **A2: Invalid selection**
     - If the Player enters an invalid menu option or an index that doesn’t correspond to a card, the Game System prints an error (e.g., “Invalid input. Please try again.”) and re-prompts for a valid choice.
 
+### Use Case 3 – Play SKIP
+
+**Primary Actor:** Active Player  
+**Goal:** End the current player’s turn without drawing a card, potentially reducing or clearing required turns due to an attack.
+
+**Preconditions:**
+- A game is in progress.
+- It is the Active Player’s turn.
+- The Active Player has at least one SKIP card in their hand.
+- The Active Player has not yet drawn a card for this turn.
+
+**Trigger:**
+- During their turn, the Active Player chooses to play a SKIP card from their hand.
+
+**Main Success Scenario:**
+1. The Game System shows it is the Active Player’s turn and prompts: “Do you want to end your turn? 1. Yes 2. No.”
+2. The Active Player chooses No, then chooses to play a single card and selects the index corresponding to SKIP.
+3. The Game System verifies SKIP can be played.
+4. The Game System removes SKIP from the Active Player’s hand and places it in the discard pile.
+5. The Game System immediately ends the Active Player’s current turn without requiring them to draw a card.
+6. If the Active Player was required to take multiple turns because of an ATTACK:
+    - SKIP cancels one of those required turns (so 2 Skips would cancel both turns).
+7. The Game System either:
+    - Moves to the next required turn for the same player (if they still have remaining attack turns), or
+    - Passes the turn to the next player in the turn order (if no turns remain).
+
+**Postconditions:**
+- SKIP is in the discard pile.
+- The Active Player has completed this turn without drawing.
+- Any attack-related required turns are reduced appropriately.
+
+**Exception Flows:**
+- **S1: Invalid play**
+    - If the Player tries to play SKIP in an invalid state (e.g., after already drawing), the Game System rejects the action, shows an error, and leaves the card in the Player’s hand.

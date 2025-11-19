@@ -9,7 +9,6 @@
 **Trigger:**
 - The Player runs the program.
 
-**Main Success Scenario:**
 1. The Player runs the program.
 2. The Game System displays a language menu and prompts the player to enter a number to choose the language.
 3. The Player enters a valid language choice
@@ -49,4 +48,44 @@
 
 - 9a. Player enters an invalid number of players (outside 2–4 or non-numeric)
     - The Game System prints an error and re-prompts for a valid player count.
+
+### Use Case 2 – Play ATTACK
+
+**Primary Actor:** Active Player (current player)  
+**Secondary Actor:** Next Player in turn order;
+**Goal:** End the current player’s turn without drawing and force the next player to take multiple turns.
+
+**Preconditions:**
+- A game is in progress.
+- It is the Active Player’s turn.
+- The Active Player has at least one ATTACK card in their hand.
+- The Active Player has not yet drawn a card for this turn.
+
+**Trigger:**
+- During their turn, the Active Player chooses to play an ATTACK card from their hand.
+
+1. The Game System shows it is the Active Player’s turn, along with their current hand and remaining turns.
+2. The Active Player chooses not to end their turn and opts to play a card instead  and then chooses the index of an ATTACK card.
+3. The Game System verifies that ATTACK can be played at this time (correct phase, card exists in hand).
+4. The Game System removes the ATTACK card from the Active Player’s hand and places it into the discard pile.
+5. The Game System immediately ends the Active Player’s turn without requiring them to draw a card.
+6. The Game System updates the game state so that the next player in turn order must take 2 full turns in a row.
+7. The Game System displays a message indicating:
+    - That the Active Player played ATTACK.
+8. Play proceeds to the next player, who must now take the required number of turns.
+
+**Postconditions:**
+- ATTACK is no longer in the Active Player’s hand and is in the discard pile.
+- The Active Player’s turn has ended without drawing a card.
+- The next player must take multiple turns according to the attack rules.
+
+**Exception Flows:**
+- **A1: ATTACK is canceled by NOPE**
+    1. After the ATTACK is played, another player who has a NOPE card may be prompted: “Player X has a Nope Card. Would you like to play it? 1. Yes 2. No.”
+    2. If that player chooses to play NOPE:
+        - The Game System removes NOPE from their hand, places it in the discard pile, and cancels the ATTACK.
+        - The game state is updated so the extra turns are not applied.
+    3. The Active Player’s turn continues as if ATTACK had not been played (they may play another card or end their turn and draw).
+- **A2: Invalid selection**
+    - If the Player enters an invalid menu option or an index that doesn’t correspond to a card, the Game System prints an error (e.g., “Invalid input. Please try again.”) and re-prompts for a valid choice.
 

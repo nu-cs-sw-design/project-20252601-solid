@@ -158,3 +158,34 @@
     - The Game System reveals as many cards as exist (e.g., 1 or 2) and clearly explains that fewer than N were available.
 - **F2: Invalid index / input**
     - If the Player enters an invalid card index or menu option, the Game System prints “Invalid input. Please try again.” and re-prompts.
+
+### Use Case 4 – Play SHUFFLE
+
+**Primary Actor:** Active Player  
+**Goal:** Randomize the order of the draw pile so that no player knows which card will be drawn next.
+
+**Preconditions:**
+- A game is in progress.
+- It is the Active Player’s turn.
+- The Active Player has at least one SHUFFLE card in their hand.
+- The draw pile contains at least one card.
+
+**Trigger:**
+- During their turn, the Active Player chooses to play a SHUFFLE card.
+
+1. The Game System shows it is the Active Player’s turn and their current hand.
+2. The Active Player chooses not to end the turn and opts to play a single card.
+3. The Active Player selects the index of a SHUFFLE card.
+4. The Game System verifies that SHUFFLE can be played, removes it from the Player’s hand, and places it in the discard pile.
+5. The Game System randomly shuffles the draw pile, so that the order of cards is unknown to all players.
+6. The Game System displays a message indicating that the deck has been shuffled.
+7. The Active Player’s turn continues: they may choose to play additional cards or to end their turn and draw a card from the newly shuffled deck.
+
+**Postconditions:**
+- SHUFFLE is in the discard pile.
+- The draw pile has been randomized.
+- The Active Player can continue their turn or end it and draw from the shuffled deck.
+
+**Alternate / Exception Flows:**
+- **H1: Draw pile effectively empty**
+    - If there are no meaningful cards to shuffle (e.g., deck has 0 or 1 card), the Game System may still consume the SHUFFLE card, display a message that shuffling had no real effect, and allow the Player to continue their turn.

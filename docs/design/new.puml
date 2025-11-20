@@ -1,51 +1,78 @@
 @startuml
 package model {
-    +class Game {
-    }
-    +class Deck {
-    }
-    +class Player {
-    }
-    +abstract class Card {
-    }
-    ~class TurnManager{
-    }
-    ~class Instantiator{
-    }
-    +enum GameType{
-    }
-    +enum CardType{
+
+    class Game {
+        - numberOfPlayers: int
+        - gameType: GameType
+        - deck: Deck
+        - players: Player[]
+        - rand: Random
+
+        - DECK_FULL_EXCEPTION: String
+        - DRAW_FROM_EMPTY_DECK_EXCEPTION: String
+        - NEGATIVE_INDEX_EXCEPTION: String
+        - INDEX_GREATER_THAN_DECK_SIZE_EXCEPTION: String
+        - MISMATCH_ORDER_SIZE_EXCEPTION: String
+        - INDEX_OUT_OF_RANGE_EXCEPTION: String
+
+        + Game(numberOfPlayers: int,
+               gameType: GameType,
+               deck: Deck,
+               players: Player[],
+               rand: Random)
     }
 
-    'Cards to implement'
-
-    +class AttackCard {
-    }
-    +class ShuffleCard {
-    }
-    +class SeeTheFutureCard {
-    }
-    +class SkipCard {
+    class Deck {
     }
 
+    class Player {
+    }
 
+    abstract class Card {
+    }
+
+    class TurnManager {
+        - currentPlayerTurn: int
+        - currentPlayerNumberOfTurns: int
+        - isReversed: boolean
+        - attackQueue: List<Integer>
+        - attackCounter: int
+        - numberOfAttacks: int
+        - turnTracker: int[]
+        - attacked: boolean
+    }
+
+    class Instantiator {
+    }
+
+    enum GameType {
+    }
+
+    enum CardType {
+    }
+
+    ' Cards to implement
+    class AttackCard extends Card {
+    }
+    class ShuffleCard extends Card {
+    }
+    class SeeTheFutureCard extends Card {
+    }
+    class SkipCard extends Card {
+    }
 }
 
 package view {
-    +class GameUI {
+    class GameUI {
     }
 }
 
 package controller {
-    +class GameController {
+    class GameController {
     }
-
 }
 
 class Main {
 }
-
-
-
 
 @enduml

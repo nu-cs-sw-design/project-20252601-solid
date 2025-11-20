@@ -1,0 +1,51 @@
+@startuml
+package model {
+    +class Game {
+    }
+    +class Deck {
+    }
+    +class Player {
+    }
+    +abstract class Card {
+    }
+    ~class TurnManager{
+    }
+    ~class Instantiator{
+    }
+    +enum GameType{
+    }
+    +enum CardType{
+    }
+
+    'Cards to implement'
+
+    +class AttackCard {
+    }
+    +class ShuffleCard {
+    }
+    +class SeeTheFutureCard {
+    }
+    +class SkipCard {
+    }
+
+
+}
+
+package view {
+    +class GameUI {
+    }
+}
+
+package controller {
+    +class GameController {
+    }
+
+}
+
+class Main {
+}
+
+
+
+
+@enduml

@@ -1,7 +1,7 @@
 @startuml
 package model {
 
-    class Game {
+    +class Game {
         - numberOfPlayers: int
         - gameType: GameType
         - deck: Deck
@@ -36,8 +36,61 @@ package model {
         + checkNumberOfAlivePlayers(): int
     }
 
-    class Deck {
+    Game --> Deck
+    Game -->"*" Player
+    Game --> TurnManager
+    Game --> GameType
+
+
+    +class Deck{
+        -deck: List<Card>
+        -rand: Random
+        -gameType: GameType
+        -numberOfPlayers: int
+        -maxDeckSize: int
+        -instantiator: Instantiator
+
+        -DECK_FULL_EXCEPTION: String
+        -DRAW_FROM_EMPTY_DECK_EXCEPTION: String
+        -NEGATIVE_INDEX_EXCEPTION: String
+        -INDEX_GREATER_THAN_DECK_SIZE_EXCEPTION: String
+        -MISMATCH_ORDER_SIZE_EXCEPTION: String
+        -INDEX_OUT_OF_RANGE_EXCEPTION: String
+
+        +Deck(deck: List<Card>, rand: Random,
+              gameType: GameType, numberOfPlayers: int,
+              maxDeckSize: int, instantiator: Instantiator)
+
+        +getDeckSize(): int
+        +getCardAtIndex(index: int): Card
+        +initializeDeck(): void
+        +shuffleDeck(): void
+        +insertCard(cardType: CardType, numberOfCards: int, bottom: boolean): void
+        +drawCard(): Card
+        +drawCardFromBottom(): Card
+        +setNumberOfPlayers(numberOfPlayers: int): void
+        +chooseGameType(gameType: GameType): void
+        +removeBombs(): int
+        +insertExplodingKittenAtIndex(indexToInsert: int): void
+        +insertImplodingKittenAtIndex(indexToInsert: int, card: Card): void
+
+        #getCardTypeAtIndex(index: int): CardType
+
+        +reorderDeckCards(newOrderIndices: int[], cardsToReorder: List<Card>): void
+
+        -addedOutOfBounds(numberOfCards: int): boolean
+        -checkIfExplodingKitten(index: int): boolean
+        -checkIfIndexOutOfRange(index: int): boolean
+
+        +peekTopCards(count: int): List<Card>
+
     }
+
+    Deck --> CardType
+    Deck --> GameType
+    Deck --> Instantiator
+    Deck --> " *" Card
+
 
     class Player {
     }

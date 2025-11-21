@@ -7,6 +7,7 @@ package model {
         - deck: Deck
         - players: Player[]
         - rand: Random
+        - turnManager: TurnManager
 
         - DECK_FULL_EXCEPTION: String
         - DRAW_FROM_EMPTY_DECK_EXCEPTION: String
@@ -20,6 +21,19 @@ package model {
                deck: Deck,
                players: Player[],
                rand: Random)
+
+        + startNewGame(gameType: GameType, numPlayers: int): void
+        + getCurrentPlayer(): Player
+        + getCurrentPlayerHand(): List<Card>
+        + playCardAtIndex(index: int): void
+        + endTurn(): void
+        + isGameOver(): boolean
+
+        + getNumberOfPlayers(): int
+        + getGameType(): GameType
+        + getDeck(): Deck
+        + getPlayerAtIndex(playerIndex: int): Player
+        + checkNumberOfAlivePlayers(): int
     }
 
     class Deck {

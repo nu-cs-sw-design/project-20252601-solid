@@ -93,10 +93,69 @@ package model {
 
 
     class Player {
+        - playerID: int
+        - hand: List<Card>
+        - isDead: boolean
+        - rand: Random
+        - isCursed: boolean
+
+        + Player(playerID: int, instantiator: Instantiator)
+
+        + getPlayerID(): int
+        + addDefuse(defuse: Card): void
+        + addCardToHand(card: Card): void
+        + hasCard(cardType: CardType): boolean
+        + getHandSize(): int
+        + getCardAt(index: int): Card
+        + getIndexOfCard(cardType: CardType): int
+        + removeCardFromHand(index: int): Card
+        + shuffleHand(): void
+        + checkNumberOfCardsInHand(cardType: CardType): int
+        + getIsDead(): boolean
+        + setIsDead(): void
+        + getIsCursed(): boolean
+        + setCursed(isCursed: boolean): void
+        + getHand(): List<Card>
     }
 
     abstract class Card {
+        - type: CardType
+
+        + Card(type: CardType)
+        + getType(): CardType
+        + play(game: Game, currentPlayer: Player): void
     }
+
+    class AttackCard extends Card {
+        + AttackCard()
+        + play(game: Game, currentPlayer: Player): void
+    }
+
+    class ShuffleCard extends Card {
+        + ShuffleCard()
+        + play(game: Game, currentPlayer: Player): void
+    }
+
+    class SeeTheFutureCard extends Card {
+        + SeeTheFutureCard()
+        + play(game: Game, currentPlayer: Player): void
+    }
+
+    class SkipCard extends Card {
+        + SkipCard()
+        + play(game: Game, currentPlayer: Player): void
+    }
+
+    Card --> CardType
+    Card --> Game
+    Card --> Player
+
+    Card <|-- AttackCard
+    Card <|-- ShuffleCard
+    Card <|-- SeeTheFutureCard
+    Card <|-- SkipCard
+
+
 
     class TurnManager {
         - currentPlayerTurn: int
@@ -109,6 +168,13 @@ package model {
         - attacked: boolean
     }
 
+    Game --> " *" Player
+
+    Player --> " *" Card
+    Player --> CardType
+    Player --> Instantiator
+
+
     class Instantiator {
     }
 
@@ -118,16 +184,6 @@ package model {
     enum CardType {
     }
 
-    ' Cards to implement
-    class AttackCard extends Card {
-    }
-    class ShuffleCard extends Card {
-    }
-    class SeeTheFutureCard extends Card {
-    }
-    class SkipCard extends Card {
-    }
-}
 
 package view {
     class GameUI {

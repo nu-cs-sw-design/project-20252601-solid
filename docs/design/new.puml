@@ -175,14 +175,45 @@ package model {
     Player --> Instantiator
 
 
-    class Instantiator {
-    }
+     class Instantiator {
+         + createCard(cardType: CardType): Card
+         + createRandom(): Random
+         + createCardList(): List<Card>
+     }
 
-    enum GameType {
-    }
+     enum GameType {
+         NONE
+         EXPLODING_KITTENS
+         STREAKING_KITTENS
+         IMPLODING_KITTENS
+     }
 
-    enum CardType {
-    }
+     enum CardType {
+         NOPE
+         DEFUSE
+         ATTACK
+         SHUFFLE
+         SKIP
+         SEE_THE_FUTURE
+         CAT_ONE
+         CAT_TWO
+         CAT_THREE
+         CAT_FOUR
+         EXPLODING_KITTEN
+         STREAKING_KITTEN
+         SWAP_TOP_AND_BOTTOM
+         GARBAGE_COLLECTION
+         CURSE_OF_THE_CAT_BUTT
+         ALTER_THE_FUTURE
+         CATOMIC_BOMB
+         SUPER_SKIP
+         MARK
+         IMPLODING_KITTEN
+         REVERSE
+         FERAL_CAT
+         TARGETED_ATTACK
+         DRAW_FROM_THE_BOTTOM
+     }
 
 
 package view {

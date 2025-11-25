@@ -1,7 +1,7 @@
 @startuml
 package model {
 
-    +class Game {
+    class Game {
         - numberOfPlayers: int
         - gameType: GameType
         - deck: Deck
@@ -9,12 +9,6 @@ package model {
         - rand: Random
         - turnManager: TurnManager
 
-        - DECK_FULL_EXCEPTION: String
-        - DRAW_FROM_EMPTY_DECK_EXCEPTION: String
-        - NEGATIVE_INDEX_EXCEPTION: String
-        - INDEX_GREATER_THAN_DECK_SIZE_EXCEPTION: String
-        - MISMATCH_ORDER_SIZE_EXCEPTION: String
-        - INDEX_OUT_OF_RANGE_EXCEPTION: String
 
         + Game(numberOfPlayers: int,
                gameType: GameType,
@@ -37,12 +31,11 @@ package model {
     }
 
     Game --> Deck
-    Game -->"*" Player
     Game --> TurnManager
     Game --> GameType
 
 
-    +class Deck{
+    class Deck{
         -deck: List<Card>
         -rand: Random
         -gameType: GameType
@@ -166,7 +159,19 @@ package model {
         - numberOfAttacks: int
         - turnTracker: int[]
         - attacked: boolean
+
+        + TurnManager(numberOfPlayers: int)
+
+        + getCurrentPlayerIndex(): int
+        + getCurrentTurns(): int
+        + startTurn(): void
+        + endTurn(): void
+        + applySkip(superSkip: boolean): void
+        + queueAttack(targetPlayerIndex: int): void
+        + processAttackQueue(): void
+        + isAttackQueueEmpty(): boolean
     }
+
 
     Game --> " *" Player
 
@@ -214,6 +219,9 @@ package model {
          TARGETED_ATTACK
          DRAW_FROM_THE_BOTTOM
      }
+
+     Instantiator --> Card
+     Instantiator --> CardType
 
 
 package view {

@@ -2,6 +2,7 @@ package domain.game;
 
 import java.util.List;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Deck {
 	private List<Card> deck;
@@ -214,6 +215,21 @@ public class Deck {
 	private boolean checkIfIndexOutOfRange(int index) {
 		return index < 0 || index >= deck.size();
 	}
+
+	public List<Card> peekTopCards(int count) {
+		// Return a view of the top `count` cards without removing them.
+		List<Card> topCards = new ArrayList<>();
+		int deckSize = deck.size();
+		int numToReturn = Math.min(count, deckSize);
+
+		// Top of deck is the last element (same as drawCard)
+		int startIndex = deckSize - numToReturn;
+		for (int i = startIndex; i < deckSize; i++) {
+			topCards.add(deck.get(i));
+		}
+		return topCards;
+	}
+
 
 }
 

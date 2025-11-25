@@ -13,7 +13,7 @@
 2. The Game System displays a language menu and prompts the player to enter a number to choose the language.
 3. The Player enters a valid language choice
 4. The Game System confirms the choice
-5. The Game System displays a game mode menu and prompts teh player to enter the number corresponding to their choice.
+5. The Game System displays a game mode menu and prompts the player to enter the number corresponding to their choice.
 6. The Player enters a valid game mode option.
 7. The Game System prints a confirmation message for the chosen mode.
 8. The Game System prompts: “How many players will be playing (2–4)?”.
@@ -159,7 +159,7 @@
 - **F2: Invalid index / input**
     - If the Player enters an invalid card index or menu option, the Game System prints “Invalid input. Please try again.” and re-prompts.
 
-### Use Case 4 – Play SHUFFLE
+### Use Case 5 – Play SHUFFLE
 
 **Primary Actor:** Active Player  
 **Goal:** Randomize the order of the draw pile so that no player knows which card will be drawn next.

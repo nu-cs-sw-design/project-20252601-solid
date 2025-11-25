@@ -222,7 +222,7 @@ package model {
 
      Instantiator --> Card
      Instantiator --> CardType
-
+}
 
 package view {
 
@@ -264,6 +264,17 @@ package controller {
 
 
 class Main {
+    + main(args: String[]): void
 }
+
+GameController --> Game
+GameController --> GameUI
+
+GameUI --> GameType
+GameUI --> Player
+GameUI --> Card
+
+Main --> GameController
+
 
 @enduml

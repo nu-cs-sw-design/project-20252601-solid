@@ -247,9 +247,21 @@ package view {
 
 
 package controller {
+
     class GameController {
+        - game: Game
+        - ui: GameUI
+
+        + GameController(game: Game, ui: GameUI)
+
+        + run(): void
+        + handleStartGame(): void
+        + handleTurn(): void
+        + handlePlayCard(): void
+        + handleEndTurn(): void
     }
 }
+
 
 class Main {
 }

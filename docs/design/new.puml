@@ -225,9 +225,26 @@ package model {
 
 
 package view {
+
     class GameUI {
+
+        + chooseLanguage(): void
+        + chooseGameType(): GameType
+        + chooseNumberOfPlayers(): int
+
+        + displayTurnStart(player: Player,
+                           hand: List<Card>,
+                           turns: int): void
+        + promptPlaySpecialCombo(): boolean
+        + promptPlayCardIndex(): int
+        + promptEndTurn(): boolean
+
+        + displaySeeTheFuture(cards: List<Card>): void
+        + displayGameOver(winner: Player): void
+        + displayError(message: String): void
     }
 }
+
 
 package controller {
     class GameController {

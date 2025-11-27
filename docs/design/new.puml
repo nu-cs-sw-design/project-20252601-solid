@@ -82,7 +82,7 @@ package model {
     Deck --> CardType
     Deck --> GameType
     Deck --> Instantiator
-    Deck --> " *" Card
+    Deck --> "*" Card
 
 
     class Player {
@@ -119,8 +119,13 @@ package model {
         + play(game: Game, currentPlayer: Player): void
     }
 
-    class AttackCard extends Card {
-        + AttackCard()
+    class ExplodingKittenCard extends Card {
+        + ExplodingKittenCard()
+        + play(game: Game, currentPlayer: Player): void
+    }
+
+    class NopeCard extends Card {
+        + NopeCard()
         + play(game: Game, currentPlayer: Player): void
     }
 
@@ -134,20 +139,15 @@ package model {
         + play(game: Game, currentPlayer: Player): void
     }
 
-    class SkipCard extends Card {
-        + SkipCard()
-        + play(game: Game, currentPlayer: Player): void
-    }
+    Card <|-- ExplodingKittenCard
+    Card <|-- NopeCard
+    Card <|-- ShuffleCard
+    Card <|-- SeeTheFutureCard
+
 
     Card --> CardType
     Card --> Game
     Card --> Player
-
-    Card <|-- AttackCard
-    Card <|-- ShuffleCard
-    Card <|-- SeeTheFutureCard
-    Card <|-- SkipCard
-
 
 
     class TurnManager {
@@ -173,7 +173,7 @@ package model {
     }
 
 
-    Game --> " *" Player
+    Game --> "*" Player
 
     Player --> " *" Card
     Player --> CardType

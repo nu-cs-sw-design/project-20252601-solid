@@ -30,5 +30,9 @@ public class Card {
 	public boolean checkIfFacedUp() {
 		return isFacedUp;
 	}
+
+	public void play(Game game, Player currentPlayer) {
+
+	}
 }
 

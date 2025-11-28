@@ -7,10 +7,15 @@ import java.security.SecureRandom;
 
 public class Instantiator {
 	public Card createCard(CardType cardType) {
-		if (Objects.requireNonNull(cardType) == CardType.SHUFFLE) {
-			return new ShuffleCard();
+		switch (cardType) {
+			case SHUFFLE:
+				return new ShuffleCard();
+			case EXPLODING_KITTEN:
+				return new ExplodingKittenCard();
+
+			default:
+				return new Card(cardType);
 		}
-		return new Card(cardType);
 	}
 
 

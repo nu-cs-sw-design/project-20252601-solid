@@ -12,6 +12,8 @@ public class Instantiator {
 				return new ShuffleCard();
 			case EXPLODING_KITTEN:
 				return new ExplodingKittenCard();
+			case NOPE:
+				return new NopeCard();
 
 			default:
 				return new Card(cardType);

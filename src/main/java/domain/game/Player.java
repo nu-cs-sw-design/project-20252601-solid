@@ -110,4 +110,8 @@ public class Player {
 		this.isCursed = isCursed;
 	}
 
+	public List<Card> getHand() {
+		return hand;
+	}
+
 }

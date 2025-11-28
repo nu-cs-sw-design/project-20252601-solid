@@ -489,4 +489,13 @@ public class Game {
 	void setAttacked(boolean attacked) {
 		this.attacked = attacked;
 	}
+
+	public Player getCurrentPlayer() {
+		return players[currentPlayerTurn];
+	}
+
+	public List<Card> getCurrentPlayerHand() {
+		return getCurrentPlayer().getHand();
+	}
+
 }

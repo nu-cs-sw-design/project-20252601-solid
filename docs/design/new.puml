@@ -112,12 +112,19 @@ package model {
     }
 
     abstract class Card {
-        - type: CardType
+        - cardType: CardType
+        - isMarked: boolean
+        - isFacedUp: boolean
 
-        + Card(type: CardType)
-        + getType(): CardType
+        + Card(cardType: CardType)
+        + getCardType(): CardType
+        + markCard(): void
+        + checkIfMarked(): boolean
+        + setFacedUp(): void
+        + checkIfFacedUp(): boolean
         + play(game: Game, currentPlayer: Player): void
     }
+
 
     class ExplodingKittenCard extends Card {
         + ExplodingKittenCard()

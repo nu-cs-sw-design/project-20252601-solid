@@ -15,6 +15,10 @@ public class Card {
 		return cardType;
 	}
 
+	public CardType getType() {
+		return cardType;
+	}
+
 	public void markCard() {
 		isMarked = true;
 	}

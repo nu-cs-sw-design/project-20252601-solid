@@ -8,7 +8,8 @@ public class ShuffleCard extends Card {
 
 	@Override
 	public void play(Game game, Player currentPlayer) {
-		// Shuffle the deck once.
-		game.playShuffle(1);
+		// Core effect of a SHUFFLE card: randomize the draw pile.
+		game.getDeck().shuffleDeck();
+
 	}
 }

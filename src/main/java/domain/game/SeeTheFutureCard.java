@@ -4,7 +4,7 @@ import java.util.List;
 
 public class SeeTheFutureCard extends Card {
 
-	private static final int NUM_CARDS_TO_PEEK = 3;
+	private static final int DEFAULT_PEEK_COUNT = 3;
 
 	public SeeTheFutureCard() {
 		super(CardType.SEE_THE_FUTURE);
@@ -12,11 +12,13 @@ public class SeeTheFutureCard extends Card {
 
 	@Override
 	public void play(Game game, Player currentPlayer) {
-		// Domain behavior: peek at the top few cards in the deck.
-		// The UI/controller layer is responsible for displaying these
-		// cards to the player.
-		List<Card> topCards = game.getDeck().peekTopCards(NUM_CARDS_TO_PEEK);
+		// Peek at the top N cards without changing deck order.
+		List<Card> topCards = game.getDeck().peekTopCards(DEFAULT_PEEK_COUNT);
 
+		// This method enforces the *rules* of the card:
+		//   - look at the top cards
+		//   - don't remove / reorder them
+		//
 
 	}
 }

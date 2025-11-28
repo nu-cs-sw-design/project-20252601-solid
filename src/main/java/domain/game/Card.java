@@ -11,11 +11,7 @@ public class Card {
 		this.isFacedUp = false;
 	}
 
-	public domain.game.CardType getCardType() {
-		return cardType;
-	}
-
-	public CardType getType() {
+	public CardType getCardType() {
 		return cardType;
 	}
 

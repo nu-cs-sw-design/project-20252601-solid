@@ -14,6 +14,8 @@ public class Instantiator {
 				return new ExplodingKittenCard();
 			case NOPE:
 				return new NopeCard();
+			case SEE_THE_FUTURE:
+				return new SeeTheFutureCard();
 
 			default:
 				return new Card(cardType);

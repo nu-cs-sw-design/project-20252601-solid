@@ -8,9 +8,7 @@ public class ShuffleCard extends Card {
 
 	@Override
 	public void play(Game game, Player currentPlayer) {
-
-
-		game.getDeck().shuffleDeck();
-
+		// Shuffle the deck once.
+		game.playShuffle(1);
 	}
 }

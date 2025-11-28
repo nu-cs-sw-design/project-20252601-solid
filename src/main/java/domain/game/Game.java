@@ -498,4 +498,22 @@ public class Game {
 		return getCurrentPlayer().getHand();
 	}
 
+	public void playCardAtIndex(int index) {
+		Player currentPlayer = getPlayerAtIndex(currentPlayerTurn);
+
+		// Basic index validation reusing existing semantics
+		if (index < 0 || index >= currentPlayer.getHandSize()) {
+			throw new IllegalArgumentException("cardIndex out of Bounds");
+
+		}
+
+		// Get the card, then remove it from the player's hand
+		Card cardToPlay = currentPlayer.getCardAt(index);
+		currentPlayer.removeCardFromHand(index);
+
+		// Delegate to polymorphic behavior on the card itself
+		cardToPlay.play(this, currentPlayer);
+	}
+
+
 }

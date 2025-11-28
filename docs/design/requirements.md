@@ -85,41 +85,39 @@
 - E1: Invalid insertion index for EXPLODING_KITTEN
   If the Active Player chooses an invalid index (negative or beyond the deck size), the Game System prints an error and re-prompts for a valid index.
 
-### Use Case 3 – Play SKIP
+### Use Case 3 – Play NOPE
 
-**Primary Actor:** Active Player  
-**Goal:** End the current player’s turn without drawing a card, potentially reducing or clearing required turns due to an attack.
+**Primary Actor:** Reacting Player (a player holding NOPE)
+**Secondary Actor:** Original Player who played an action card
+**Goal:** Cancel the effect of another player’s action card such as SHUFFLE or SEE_THE_FUTURE.
 
 **Preconditions:**
 - A game is in progress.
-- It is the Active Player’s turn.
-- The Active Player has at least one SKIP card in their hand.
-- The Active Player has not yet drawn a card for this turn.
+- A player (the Original Player) has just played an action card (e.g., SHUFFLE or SEE_THE_FUTURE).
+- At least one other player has a NOPE card in their hand.
 
 **Trigger:**
-- During their turn, the Active Player chooses to play a SKIP card from their hand.
+- The Game System asks if any player wants to play NOPE, or a player declares that they will play NOPE.
 
 
-1. The Game System shows it is the Active Player’s turn and prompts: “Do you want to end your turn? 1. Yes 2. No.”
-2. The Active Player chooses No, then chooses to play a single card and selects the index corresponding to SKIP.
-3. The Game System verifies SKIP can be played.
-4. The Game System removes SKIP from the Active Player’s hand and places it in the discard pile.
-5. The Game System immediately ends the Active Player’s current turn without requiring them to draw a card.
-6. If the Active Player was required to take multiple turns because of an ATTACK:
-    - SKIP cancels one of those required turns (so 2 Skips would cancel both turns).
-7. The Game System either:
-    - Moves to the next required turn for the same player (if they still have remaining attack turns), or
-    - Passes the turn to the next player in the turn order (if no turns remain).
+1. The Original Player plays an action card (e.g., SHUFFLE).
+2. Before the action takes effect, the Game System checks if any other player has a NOPE card.
+3. The Game System prompts eligible players, for example:
+   “Player X has played SHUFFLE. Do you want to play NOPE? 1. Yes 2. No”
+4. A Reacting Player chooses “Yes” and selects the NOPE card from their hand.
+5. The Game System removes the NOPE card from the Reacting Player’s hand and places it in the discard pile.
+6. The Game System cancels the effect of the Original Player’s action card (as if it were never played).
+7. The game continues with turn flow as if the original action card’s effect did not happen.
 
 **Postconditions:**
-- SKIP is in the discard pile.
-- The Active Player has completed this turn without drawing.
-- Any attack-related required turns are reduced appropriately.
+- The NOPE card is in the discard pile.
+- The canceled action card has no effect on the game state.
+- Turn flow continues according to the normal rules.
 
 **Exception Flows:**
-- **S1: Invalid play**
-    - If the Player tries to play SKIP in an invalid state (e.g., after already drawing), the Game System rejects the action, shows an error, and leaves the card in the Player’s hand.
-
+- N1: No player chooses to play NOPE
+  If no one responds with “Yes”, the Game System resolves the original action card normally.
+- 
 ### Use Case 4 – Play SEE_THE_FUTURE
 
 **Name:** Play SEE_THE_FUTURE  

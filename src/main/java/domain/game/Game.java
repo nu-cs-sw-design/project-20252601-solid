@@ -515,5 +515,20 @@ public class Game {
 		cardToPlay.play(this, currentPlayer);
 	}
 
+	public void endTurn() {
+		// One turn for the current player has finished.
+		decrementNumberOfTurns();
+		if (checkIfNumberOfTurnsIsZero()) {
+			incrementPlayerTurn();
+
+		}
+	}
+
+	public boolean isGameOver() {
+		// Reuse your existing helper
+		return checkNumberOfAlivePlayers() <= 1;
+	}
+
+
 
 }

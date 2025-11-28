@@ -49,45 +49,41 @@
 - 9a. Player enters an invalid number of players (outside 2–4 or non-numeric)
     - The Game System prints an error and re-prompts for a valid player count.
 
-### Use Case 2 – Play ATTACK
+### Use Case 2 – Play EXPLODING_KITTEN
 
 **Primary Actor:** Active Player (current player)  
-**Secondary Actor:** Next Player in turn order;
-**Goal:** End the current player’s turn without drawing and force the next player to take multiple turns.
+**Goal:** Resolve drawing an EXPLODING_KITTEN: either defuse it and keep playing, or explode and be eliminated.
 
 **Preconditions:**
 - A game is in progress.
 - It is the Active Player’s turn.
-- The Active Player has at least one ATTACK card in their hand.
-- The Active Player has not yet drawn a card for this turn.
+- The Active Player has just drawn the top card from the Deck.
 
 **Trigger:**
-- During their turn, the Active Player chooses to play an ATTACK card from their hand.
+- The drawn card is an EXPLODING_KITTEN.
 
-1. The Game System shows it is the Active Player’s turn, along with their current hand and remaining turns.
-2. The Active Player chooses not to end their turn and opts to play a card instead  and then chooses the index of an ATTACK card.
-3. The Game System verifies that ATTACK can be played at this time (correct phase, card exists in hand).
-4. The Game System removes the ATTACK card from the Active Player’s hand and places it into the discard pile.
-5. The Game System immediately ends the Active Player’s turn without requiring them to draw a card.
-6. The Game System updates the game state so that the next player in turn order must take 2 full turns in a row.
-7. The Game System displays a message indicating:
-    - That the Active Player played ATTACK.
-8. Play proceeds to the next player, who must now take the required number of turns.
+1. The Active Player draws the top card from the Deck.
+2. The Game System reveals that the card is EXPLODING_KITTEN.
+3. The Game System checks whether the Active Player has a DEFUSE card.
+4. If the player does not have a DEFUSE:
+    - The Game System marks the player as dead (eliminated).
+    - The Game System removes the player from the turn rotation.
+    - The Game System checks if only one player remains; if so, that player wins and the game ends.
+5. If the player does have a DEFUSE:
+    - The Game System prompts the player to choose where to put the EXPLODING_KITTEN back into the Deck (for example, by choosing an index).
+    - The Game System inserts the EXPLODING_KITTEN card into the Deck at the chosen position.
+    - The Game System removes one DEFUSE card from the Active Player’s hand.
+    - The game continues with the next player’s turn as normal.
+
 
 **Postconditions:**
-- ATTACK is no longer in the Active Player’s hand and is in the discard pile.
-- The Active Player’s turn has ended without drawing a card.
-- The next player must take multiple turns according to the attack rules.
+- If no DEFUSE: the Active Player is dead and out of the game.
+- If DEFUSE was used: the EXPLODING_KITTEN is hidden back in the Deck, the DEFUSE has been discarded, and play continues.
+- The game may end if only one player remains.
 
 **Exception Flows:**
-- **A1: ATTACK is canceled by NOPE**
-    1. After the ATTACK is played, another player who has a NOPE card may be prompted: “Player X has a Nope Card. Would you like to play it? 1. Yes 2. No.”
-    2. If that player chooses to play NOPE:
-        - The Game System removes NOPE from their hand, places it in the discard pile, and cancels the ATTACK.
-        - The game state is updated so the extra turns are not applied.
-    3. The Active Player’s turn continues as if ATTACK had not been played (they may play another card or end their turn and draw).
-- **A2: Invalid selection**
-    - If the Player enters an invalid menu option or an index that doesn’t correspond to a card, the Game System prints an error (e.g., “Invalid input. Please try again.”) and re-prompts for a valid choice.
+- E1: Invalid insertion index for EXPLODING_KITTEN
+  If the Active Player chooses an invalid index (negative or beyond the deck size), the Game System prints an error and re-prompts for a valid index.
 
 ### Use Case 3 – Play SKIP
 

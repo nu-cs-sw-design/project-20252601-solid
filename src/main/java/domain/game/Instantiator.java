@@ -1,9 +1,7 @@
 package domain.game;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
-import java.security.SecureRandom;
 
 public class Instantiator {
 	public Card createCard(CardType cardType) {
@@ -25,7 +23,7 @@ public class Instantiator {
 
 	public Random createRandom() {
 
-		return new SecureRandom();
+		return new Random();
 	}
 
 	public ArrayList<Card> createCardList() {

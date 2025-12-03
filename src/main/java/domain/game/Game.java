@@ -10,14 +10,8 @@ public class Game {
 	private domain.game.Player[] players;
 	private Random rand;
 
-	private int currentPlayerTurn;
-	private int currentPlayerNumberOfTurns;
-	private boolean isReversed;
-	private List<Integer> attackQueue;
-	private int attackCounter;
-	private int numberOfAttacks;
-	private int[] turnTracker;
-	private boolean attacked;
+	private TurnManager turnManager;
+
 
 	private static final String PLAYER_HAND_EMPTY_EXCEPTION = "Player has no cards to steal";
 	private static final String INVALID_PLAYER_INDEX_EXCEPTION = "Invalid player index.";
@@ -34,24 +28,19 @@ public class Game {
 	private static final String NUMBER_OF_TURNS_OUT_OF_BOUNDS_EXCEPTION =
 			"Number of turns must be between 1 and 6.";
 
-	public Game (int numberOfPlayers, GameType gameType,
-                 Deck deck, domain.game.Player[] players, Random rand,
-                 List<Integer> attackQueue,
-                 int[] turnTracker) {
+	public Game(int numberOfPlayers, GameType gameType,
+				Deck deck, Player[] players, Random rand,
+				List<Integer> attackQueue,
+				int[] turnTracker) {
+
 		this.numberOfPlayers = numberOfPlayers;
 		this.gameType = gameType;
 		this.deck = deck;
 		this.players = players;
 		this.rand = rand;
-		this.currentPlayerTurn = 0;
-		this.currentPlayerNumberOfTurns = 0;
-		this.attackQueue = attackQueue;
-		isReversed = false;
-		this.turnTracker = turnTracker;
-		this.attackCounter = 0;
-		this.numberOfAttacks = 0;
-		this.attacked = false;
+		this.turnManager = new TurnManager(numberOfPlayers, attackQueue, turnTracker);
 	}
+
 
 	public void swapTopAndBottom() {
 		if (checkDeckHasOneCardOrLess()) {
@@ -77,26 +66,34 @@ public class Game {
 	}
 
 	public void stealTypeCard(CardType cardType, int playerToStealFrom) {
-		domain.game.Player player = players[playerToStealFrom];
-		try {
-			int cardIndex = getIndexOfCardFromHand(playerToStealFrom,
-					cardType);
-			Card stealedCard = player.getCardAt(cardIndex);
-			player.removeCardFromHand(cardIndex);
-			players[currentPlayerTurn].addCardToHand(stealedCard);
+		// Basic bounds check is still useful
+		if (checkUserOutOfBounds(playerToStealFrom)) {
+			throw new IllegalArgumentException(OUT_OF_BOUNDS_PLAYER_INDEX_EXCEPTION);
 		}
-		catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException
-					(CARD_TYPE_NOT_FOUND_EXCEPTION);
+
+		Player fromPlayer = getPlayerAtIndex(playerToStealFrom);
+		Player currentPlayer = getCurrentPlayer();
+
+		try {
+			int cardIndex = fromPlayer.getIndexOfCard(cardType);
+			Card stolenCard = fromPlayer.getCardAt(cardIndex);
+			fromPlayer.removeCardFromHand(cardIndex);
+			currentPlayer.addCardToHand(stolenCard);
+		} catch (IllegalArgumentException e) {
+			// Preserve existing behavior / message
+			throw new IllegalArgumentException(CARD_TYPE_NOT_FOUND_EXCEPTION);
 		}
 	}
 
 
-	public void startAttackPhase() {
 
+	public void startAttackPhase() {
 		final int attackedAttackThreshold = 4;
-		attackCounter = currentPlayerTurn;
-		numberOfAttacks = 0;
+
+		// Attack starts from whoever is currently active
+		turnManager.setAttackCounter(getPlayerTurn());
+		turnManager.resetNumberOfAttacks();
+
 		while (!isAttackQueueEmpty()) {
 			int attack = removeAttackQueue();
 			if (attack <= attackedAttackThreshold) {
@@ -105,16 +102,29 @@ public class Game {
 				playAttack();
 			}
 		}
-		if (turnTracker[attackCounter] == 1) {
-			turnTracker[attackCounter] = 0;
+
+		int attackCounter = turnManager.getAttackCounter();
+		int[] tracker = turnManager.getTurnTracker();
+
+		// Mirror old logic: if they already had 1 turn, clear it first
+		if (tracker[attackCounter] == 1) {
+			tracker[attackCounter] = 0;
 		}
-		if (attackCounter == currentPlayerTurn) {
-			currentPlayerNumberOfTurns += numberOfAttacks;
-			turnTracker[attackCounter] = 1;
-			attacked = false;
+
+		int numberOfAttacks = turnManager.getNumberOfAttacks();
+
+		if (attackCounter == getPlayerTurn()) {
+			// All attacks came back to current player
+			int turns = turnManager.getCurrentTurns();
+			turns += numberOfAttacks;
+			turnManager.setCurrentTurns(turns);
+			tracker[attackCounter] = 1;
+			turnManager.setAttacked(false);
 		} else {
-			turnTracker[attackCounter] += numberOfAttacks;
+			// Targeted attacks accumulate on another player
+			tracker[attackCounter] += numberOfAttacks;
 		}
+
 		decrementNumberOfTurns();
 		if (checkIfNumberOfTurnsIsZero()) {
 			incrementPlayerTurn();
@@ -124,14 +134,15 @@ public class Game {
 	public void playAttack() {
 		incrementAttackCounter();
 		addAttacks();
-		attacked = true;
+		turnManager.setAttacked(true);
 	}
 
-	public void playTargetedAttack (int attackedPlayerIndex) {
+	public void playTargetedAttack(int attackedPlayerIndex) {
 		setAttackCounter(attackedPlayerIndex);
 		addAttacks();
-		attacked = true;
+		turnManager.setAttacked(true);
 	}
+
 
 	public boolean playExplodingKitten(int playerIndex) {
 		if (checkUserOutOfBounds(playerIndex)) {
@@ -140,8 +151,8 @@ public class Game {
 		if (checkIfPlayerHasCard(playerIndex, CardType.DEFUSE)) {
 			return false;
 		}
-		players[playerIndex].setIsDead();
-		if (playerIndex == currentPlayerTurn) {
+		getPlayerAtIndex(playerIndex).setIsDead();
+		if (playerIndex == getPlayerTurn()) {
 			setCurrentPlayerNumberOfTurns(0);
 		}
 		return true;
@@ -149,26 +160,24 @@ public class Game {
 
 	public void playImplodingKitten() {
 		setCurrentPlayerNumberOfTurns(0);
-		players[currentPlayerTurn].setIsDead();
+		getCurrentPlayer().setIsDead();
 	}
+
 
 	public void playDefuse(int idxToInsertExplodingKitten, int playerIndex) {
 		if (checkUserOutOfBounds(playerIndex)) {
 			throw new UnsupportedOperationException(INVALID_PLAYER_INDEX_EXCEPTION);
 		}
-		Player currentPlayer = players[playerIndex];
-		try {
-			deck.insertExplodingKittenAtIndex(idxToInsertExplodingKitten);
-		} catch (UnsupportedOperationException e) {
-			throw e;
-		}
+		Player currentPlayer = getPlayerAtIndex(playerIndex);
+
+		deck.insertExplodingKittenAtIndex(idxToInsertExplodingKitten);
+
 		int defuseIdx = currentPlayer.getIndexOfCard(CardType.DEFUSE);
 		currentPlayer.removeCardFromHand(defuseIdx);
 
-		if (playerIndex == currentPlayerTurn) {
+		if (playerIndex == getPlayerTurn()) {
 			setCurrentPlayerNumberOfTurns(0);
 		}
-
 	}
 
 	public Card drawFromBottom() {
@@ -196,16 +205,23 @@ public class Game {
 	public void playReverse() {
 		int startPointer = 0;
 		int endPointer = numberOfPlayers - 1;
-		isReversed = !isReversed;
+
+		turnManager.toggleReversed();   // instead of isReversed = !isReversed;
+
 		while (startPointer < endPointer) {
-			domain.game.Player temporaryPlayerOne = players[startPointer];
-			domain.game.Player temporaryPlayerTwo = players[endPointer];
+			Player temporaryPlayerOne = players[startPointer];
+			Player temporaryPlayerTwo = players[endPointer];
 			players[startPointer] = temporaryPlayerTwo;
 			players[endPointer] = temporaryPlayerOne;
 			startPointer++;
 			endPointer--;
 		}
-		currentPlayerTurn = numberOfPlayers - currentPlayerTurn - 1;
+
+		// use turnManager instead of currentPlayerTurn directly
+		int current = getPlayerTurn();
+		current = numberOfPlayers - current - 1;
+		setCurrentPlayerTurn(current);
+
 		decrementNumberOfTurns();
 		if (checkIfNumberOfTurnsIsZero()) {
 			incrementPlayerTurn();
@@ -243,13 +259,14 @@ public class Game {
 		if (superSkip) {
 			setCurrentPlayerNumberOfTurns(0);
 		} else {
-			currentPlayerNumberOfTurns--;
+			setCurrentPlayerNumberOfTurns(getNumberOfTurns() - 1);
 		}
 		if (checkIfNumberOfTurnsIsZero()) {
 			incrementPlayerTurn();
 		}
-		return currentPlayerNumberOfTurns;
+		return getNumberOfTurns();
 	}
+
 
 	public void playGarbageCollection(CardType cardToDiscard) {
 		deck.insertCard(cardToDiscard, 1, false);
@@ -261,19 +278,25 @@ public class Game {
 	}
 
 	public void incrementPlayerTurn() {
+		int idx = getPlayerTurn();
 		do {
-			currentPlayerTurn = (currentPlayerTurn + 1) % numberOfPlayers;
-		} while (checkIfPlayerDead(currentPlayerTurn));
+			idx = (idx + 1) % numberOfPlayers;
+		} while (checkIfPlayerDead(idx));
+		setCurrentPlayerTurn(idx);
 	}
+
 
 	public void incrementAttackCounter() {
+		int idx = turnManager.getAttackCounter();
 		do {
-			attackCounter = (attackCounter + 1) % numberOfPlayers;
-		} while (checkIfPlayerDead(attackCounter));
+			idx = (idx + 1) % numberOfPlayers;
+		} while (checkIfPlayerDead(idx));
+		turnManager.setAttackCounter(idx);
 	}
 
+
 	public void setAttackCounter(int playerIndex) {
-		attackCounter = playerIndex;
+		turnManager.setAttackCounter(playerIndex);
 	}
 
 	GameType getGameTypeForTesting() {
@@ -289,9 +312,10 @@ public class Game {
 	}
 
 	public void addAttacks() {
-		numberOfAttacks++;
-		numberOfAttacks++;
+		turnManager.incrementNumberOfAttacks();
+		turnManager.incrementNumberOfAttacks();
 	}
+
 
 	public void playMark(int playerIndex, int cardIndex) {
 		if (checkUserOutOfBounds(playerIndex)) {
@@ -309,25 +333,27 @@ public class Game {
 	}
 
 	public void addAttackQueue(int attack) {
-		attackQueue.add(attack);
+		turnManager.addAttack(attack);
 	}
 
 	public int removeAttackQueue() {
-		return attackQueue.remove(0);
+		return turnManager.removeAttack();
 	}
 
 	public boolean isAttackQueueEmpty() {
-		return attackQueue.isEmpty();
+		return turnManager.isAttackQueueEmpty();
 	}
+
 
 	public void setPlayerNumberOfTurns() {
-		currentPlayerNumberOfTurns = turnTracker[currentPlayerTurn];
-		turnTracker[currentPlayerTurn] = 1;
+		turnManager.resetTurnsFromTrackerForCurrentPlayer();
 	}
 
+
 	public int getPlayerTurn() {
-		return currentPlayerTurn;
+		return turnManager.getCurrentPlayerIndex();
 	}
+
 
 	public int getNumberOfPlayers() {
 		return numberOfPlayers;
@@ -345,15 +371,15 @@ public class Game {
 	}
 
 	public void setCurrentPlayerNumberOfTurns(int numberOfTurns) {
-		currentPlayerNumberOfTurns = numberOfTurns;
+		turnManager.setCurrentTurns(numberOfTurns);
 	}
 
 	public void decrementNumberOfTurns() {
-		currentPlayerNumberOfTurns--;
+		turnManager.decrementTurns();
 	}
 
 	public int getNumberOfTurns() {
-		return currentPlayerNumberOfTurns;
+		return turnManager.getCurrentTurns();
 	}
 
 	public int getDeckSize() {
@@ -384,8 +410,9 @@ public class Game {
 	}
 
 	public void addCardToHand(Card card) {
-		getPlayerAtIndex(currentPlayerTurn).addCardToHand(card);
+		getCurrentPlayer().addCardToHand(card);
 	}
+
 
 	public boolean checkIfPlayerDead(int playerIndex) {
 		return getPlayerAtIndex(playerIndex).getIsDead();
@@ -408,13 +435,14 @@ public class Game {
 	}
 
 	public boolean getIsReversed() {
-		return isReversed;
+		return turnManager.isReversed();
 	}
+
 
 	protected void setCurrentPlayerTurn(int turn) {
-		currentPlayerTurn = turn;
-
+		turnManager.setCurrentPlayerIndex(turn);
 	}
+
 
 	private boolean matchingGameType (GameType gameType) {
 		return gameType == GameType.NONE;
@@ -453,50 +481,61 @@ public class Game {
 	private boolean checkIfNumberOfTurnsOutOfBounds() {
 		final int minNumberOfTurnsThreshold = 1;
 		final int maxNumberOfTurnsThreshold = 6;
-		return currentPlayerNumberOfTurns < minNumberOfTurnsThreshold
-				|| currentPlayerNumberOfTurns > maxNumberOfTurnsThreshold;
+		int turns = turnManager.getCurrentTurns();
+		return turns < minNumberOfTurnsThreshold
+				|| turns > maxNumberOfTurnsThreshold;
 	}
 
+
 	private boolean checkIfNumberOfTurnsIsZero() {
-		return currentPlayerNumberOfTurns == 0;
+		return turnManager.hasNoTurnsLeft();
 	}
 
 	public void setTurnToTargetedIndexIfAttackOccurred() {
-		if (attacked) {
-			attacked = false;
-			currentPlayerTurn = attackCounter;
-			if (checkIfPlayerDead(currentPlayerTurn)) {
+		if (turnManager.getAttacked()) {
+			turnManager.setAttacked(false);
+
+			int newIndex = turnManager.getAttackCounter();
+			setCurrentPlayerTurn(newIndex);
+
+			if (checkIfPlayerDead(getPlayerTurn())) {
 				incrementPlayerTurn();
 			}
 		}
 	}
 
+
 	public int getTurnCountOfPlayer(int playerIndex) {
-		return turnTracker[playerIndex];
+		return turnManager.getTurnCountOfPlayer(playerIndex);
 	}
 
 	public boolean getAttacked() {
-		return attacked;
+		return turnManager.getAttacked();
 	}
 
 	public int getAttackCounter() {
-		return attackCounter;
+		return turnManager.getAttackCounter();
 	}
 
+
 	public int getNumberOfAttacks() {
-		return numberOfAttacks;
+		return turnManager.getNumberOfAttacks();
 	}
 
 	void setNumberOfAttacks(int numberOfAttacks) {
-		this.numberOfAttacks = numberOfAttacks;
+		// if you really need a setter:
+		for (int i = 0; i < numberOfAttacks; i++) {
+			turnManager.incrementNumberOfAttacks();
+		}
 	}
 
+
 	void setAttacked(boolean attacked) {
-		this.attacked = attacked;
+		turnManager.setAttacked(attacked);
 	}
 
 	public Player getCurrentPlayer() {
-		return players[currentPlayerTurn];
+		return players[getPlayerTurn()];
 	}
 
 	public List<Card> getCurrentPlayerHand() {
@@ -504,19 +543,15 @@ public class Game {
 	}
 
 	public void playCardAtIndex(int index) {
-		Player currentPlayer = getPlayerAtIndex(currentPlayerTurn);
+		Player currentPlayer = getCurrentPlayer();
 
-		// Basic index validation reusing existing semantics
 		if (index < 0 || index >= currentPlayer.getHandSize()) {
 			throw new IllegalArgumentException("cardIndex out of Bounds");
-
 		}
 
-		// Get the card, then remove it from the player's hand
 		Card cardToPlay = currentPlayer.getCardAt(index);
 		currentPlayer.removeCardFromHand(index);
 
-		// Delegate to polymorphic behavior on the card itself
 		cardToPlay.play(this, currentPlayer);
 	}
 

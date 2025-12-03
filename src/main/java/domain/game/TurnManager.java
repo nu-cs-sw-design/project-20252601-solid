@@ -59,9 +59,21 @@ public class TurnManager {
 		isReversed = !isReversed;
 	}
 
-	public List<Integer> getAttackQueue() {
-		return attackQueue;
+	// --- attack queue helpers ---
+
+	public void addAttack(int attack) {
+		attackQueue.add(attack);
 	}
+
+	public int removeAttack() {
+		return attackQueue.remove(0);
+	}
+
+	public boolean isAttackQueueEmpty() {
+		return attackQueue.isEmpty();
+	}
+
+	// --- attack tracking ---
 
 	public int getAttackCounter() {
 		return attackCounter;
@@ -83,9 +95,22 @@ public class TurnManager {
 		numberOfAttacks = 0;
 	}
 
+	// --- turn tracker ---
+
 	public int[] getTurnTracker() {
 		return turnTracker;
 	}
+
+	public void resetTurnsFromTrackerForCurrentPlayer() {
+		currentPlayerNumberOfTurns = turnTracker[currentPlayerTurn];
+		turnTracker[currentPlayerTurn] = 1;
+	}
+
+	public int getTurnCountOfPlayer(int playerIndex) {
+		return turnTracker[playerIndex];
+	}
+
+	// --- attack flag ---
 
 	public boolean getAttacked() {
 		return attacked;

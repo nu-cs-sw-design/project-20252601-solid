@@ -8,13 +8,17 @@ public class ExplodingKittenCard extends Card {
 
 	@Override
 	public void play(Game game, Player currentPlayer) {
-		// In the actual game rules, Exploding Kitten is NOT played from hand.
-		// It only takes effect when it is drawn from the deck.
+		// Use existing Game logic as a helper:
+		// playerID usually matches their index in the array for this codebase.
+		int playerIndex = currentPlayer.getPlayerID();
+
+		boolean exploded = game.playExplodingKitten(playerIndex);
+
+		// If exploded == false, the game logic expects a DEFUSE to be used.
+		// The controller can now:
+		//  - ask where to put the bomb back
+		//  - call game.playDefuse(indexToInsert, playerIndex)
 		//
-		// The explosion / defuse logic is still handled by Game when a card
-		// is drawn and identified as EXPLODING_KITTEN.
-		//
-		// We keep this method as a no-op (or could throw) to make the design
-		// explicit and avoid duplicating that logic here.
+		// We don't handle UI prompts in the model.
 	}
 }

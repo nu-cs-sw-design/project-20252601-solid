@@ -360,6 +360,11 @@ public class Game {
 		return deck.getDeckSize();
 	}
 
+	public List<Card> peekTopCards(int count) {
+		return deck.peekTopCards(count);
+	}
+
+
 	public Card drawCard() {
 		return deck.drawCard();
 	}

@@ -25,6 +25,7 @@ public class TurnManager {
 		this.attacked = false;
 	}
 
+
 	// --- basic getters/setters  ---
 
 	public int getCurrentPlayerIndex() {

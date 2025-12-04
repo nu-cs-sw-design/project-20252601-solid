@@ -8,17 +8,13 @@ public class ExplodingKittenCard extends Card {
 
 	@Override
 	public void play(Game game, Player currentPlayer) {
-		// Use existing Game logic as a helper:
-		// playerID usually matches their index in the array for this codebase.
-		int playerIndex = currentPlayer.getPlayerID();
-
+		int playerIndex = game.getPlayerTurn();
 		boolean exploded = game.playExplodingKitten(playerIndex);
 
-		// If exploded == false, the game logic expects a DEFUSE to be used.
-		// The controller can now:
-		//  - ask where to put the bomb back
-		//  - call game.playDefuse(indexToInsert, playerIndex)
-		//
-		// We don't handle UI prompts in the model.
+		// If exploded == false, that means the player has a DEFUSE.
+		// The controller / UI will:
+		//   1) asking where to reinsert the bomb
+		//   2) calling game.playDefuse(indexToInsert, playerIndex)
 	}
+
 }

@@ -141,8 +141,10 @@ package model {
     }
 
     class SeeTheFutureCard extends Card {
-        + SeeTheFutureCard()
-        + play(game: Game, currentPlayer: Player): void
+          - DEFAULT_PEEK_COUNT: int
+          + SeeTheFutureCard()
+          + play(game: Game, currentPlayer: Player): void
+          + getPeekCount(): int
     }
 
     Card <|-- ExplodingKittenCard

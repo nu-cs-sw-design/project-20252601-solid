@@ -321,6 +321,92 @@ public class GameUI {
 		}
 	}
 
+	// Called when a player draws a card at end of turn
+	public void displayCardDrawn(Player player, Card card) {
+		String tmpl = (messages != null && messages.containsKey("cardDrawn"))
+				? messages.getString("cardDrawn")
+				: "Player {0} draws a {1}.";
+		String line = MessageFormat.format(
+				tmpl,
+				player.getPlayerID(),
+				getLocalizedCardType(card.getCardType())
+		);
+		System.out.println(line);
+	}
+
+	// Called when a player explodes (no DEFUSE)
+	public void displayPlayerExploded(Player player) {
+		String tmpl = (messages != null && messages.containsKey("playerExploded"))
+				? messages.getString("playerExploded")
+				: "💥 Player {0} has exploded and is out of the game!";
+		String line = MessageFormat.format(tmpl, player.getPlayerID());
+		System.out.println(line);
+	}
+
+	// Called when a player successfully uses DEFUSE
+	public void displayExplodingKittenDefused(Player player) {
+		String tmpl = (messages != null && messages.containsKey("playerDefused"))
+				? messages.getString("playerDefused")
+				: "Player {0} used a DEFUSE!";
+		String line = MessageFormat.format(tmpl, player.getPlayerID());
+		System.out.println(line);
+	}
+
+	// Ask where to re-insert the Exploding Kitten in the deck
+	public int promptExplodingKittenInsertIndex(int deckSize) {
+		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+
+		String prompt = (messages != null && messages.containsKey("ekInsertPrompt"))
+				? messages.getString("ekInsertPrompt")
+				: "Where do you want to put the Exploding Kitten back? (0 to {0})";
+		String invalid = (messages != null && messages.containsKey("invalidNumber"))
+				? messages.getString("invalidNumber")
+				: "Invalid number. Please enter an integer in range.";
+
+		System.out.println(MessageFormat.format(prompt, deckSize));
+
+		while (true) {
+			String input = scanner.nextLine().trim();
+			try {
+				int idx = Integer.parseInt(input);
+				if (idx >= 0 && idx <= deckSize) {
+					return idx;
+				}
+			} catch (NumberFormatException ignored) {}
+			System.out.println(invalid);
+		}
+	}
+
+	// SEE_THE_FUTURE: reuse your existing display, just with player name if you want
+	public void displaySeeTheFuturePeek(Player player, List<Card> cards) {
+		// optional: mention who is peeking
+		String header = (messages != null && messages.containsKey("futurePeekPlayer"))
+				? messages.getString("futurePeekPlayer")
+				: "Player {0} is peeking at the future...";
+		System.out.println(MessageFormat.format(header, player.getPlayerID()));
+
+		// reuse your existing method
+		displaySeeTheFuture(cards);
+	}
+
+	// SHUFFLE feedback
+	public void displayDeckShuffled() {
+		String msg = (messages != null && messages.containsKey("deckShuffled"))
+				? messages.getString("deckShuffled")
+				: "The deck has been shuffled.";
+		System.out.println(msg);
+	}
+
+	// NOPE feedback
+	public void displayNopePlayed(Player player) {
+		String tmpl = (messages != null && messages.containsKey("nopePlayed"))
+				? messages.getString("nopePlayed")
+				: "Player {0} played NOPE!";
+		String line = MessageFormat.format(tmpl, player.getPlayerID());
+		System.out.println(line);
+	}
+
+
 	// Generic error printing for the controller
 	public void displayError(String message) {
 		System.out.println("Error: " + message);

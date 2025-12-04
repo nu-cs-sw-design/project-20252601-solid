@@ -7,18 +7,17 @@ public class SeeTheFutureCard extends Card {
 	private static final int DEFAULT_PEEK_COUNT = 3;
 
 	public SeeTheFutureCard() {
+
 		super(CardType.SEE_THE_FUTURE);
 	}
 
 	@Override
 	public void play(Game game, Player currentPlayer) {
-		// Peek at the top N cards without changing deck order.
-		List<Card> topCards = game.getDeck().peekTopCards(DEFAULT_PEEK_COUNT);
+		// This card only allows a peek via controller/UI,
+		// and must not change deck order.
+	}
 
-		// This method enforces the *rules* of the card:
-		//   - look at the top cards
-		//   - don't remove / reorder them
-		//
-
+	public int getPeekCount() {
+		return DEFAULT_PEEK_COUNT;
 	}
 }

@@ -89,7 +89,7 @@ public class GameUI {
 	}
 
 
-	public void chooseNumberOfPlayers() {
+	public int chooseNumberOfPlayers() {
 		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
 		final String numOfPlayersPrompt = messages.getString("numOfPlayersPrompt");
 		final String numOfPlayersTwo = messages.getString("numOfPlayersTwo");
@@ -101,27 +101,22 @@ public class GameUI {
 
 		while (true) {
 			String userInput = scanner.nextLine();
-			final int twoPlayers = 2;
-			final int threePlayers = 3;
-			final int fourPlayers = 4;
 			switch (userInput) {
 				case "2":
-					game.setNumberOfPlayers(twoPlayers);
 					System.out.println(numOfPlayersTwo);
-					return;
+					return 2;
 				case "3":
-					game.setNumberOfPlayers(threePlayers);
 					System.out.println(numOfPlayersThree);
-					return;
+					return 3;
 				case "4":
-					game.setNumberOfPlayers(fourPlayers);
 					System.out.println(numOfPlayersFour);
-					return;
+					return 4;
 				default:
 					System.out.println(invalidPlayersNum);
 			}
 		}
 	}
+
 
 	private int checkValidPlayerIndexInput() {
 		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);

@@ -1871,6 +1871,30 @@ public class GameUI {
 			System.out.println(invalidInput);
 		}
 	}
+
+	// Ask which card index to play
+	public int promptPlayCardIndex() {
+		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+
+		String prompt = messages != null && messages.containsKey("playedCardPrompt")
+				? messages.getString("playedCardPrompt")
+				: "Which index card do you want to play?";
+		String invalidNumber = messages != null && messages.containsKey("invalidNumber")
+				? messages.getString("invalidNumber")
+				: "Invalid number. Please enter an integer.";
+
+		System.out.println(prompt);
+
+		while (true) {
+			String input = scanner.nextLine().trim();
+			try {
+				return Integer.parseInt(input);
+			} catch (NumberFormatException e) {
+				System.out.println(invalidNumber);
+			}
+		}
+	}
+
 }
 
 

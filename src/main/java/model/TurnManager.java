@@ -26,7 +26,7 @@ public class TurnManager {
 	}
 
 
-	// --- basic getters/setters  ---
+	//  basic getters/setters
 
 	public int getCurrentPlayerIndex() {
 		return currentPlayerTurn;
@@ -111,7 +111,7 @@ public class TurnManager {
 		return turnTracker[playerIndex];
 	}
 
-	// --- attack flag ---
+	//  attack flag
 
 	public boolean getAttacked() {
 		return attacked;

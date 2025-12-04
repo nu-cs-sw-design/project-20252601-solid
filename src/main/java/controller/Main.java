@@ -14,25 +14,27 @@ import java.security.SecureRandom;
 
 public class Main {
 	public static void main(String[] args) {
-
 		final int maxDeckSize = 42;
 		Instantiator instantiator = new Instantiator();
 
-		// UI: choose language, game type, and player count
 		GameUI gameUI = new GameUI();
 		gameUI.chooseLanguage();
 		GameType chosenType = gameUI.chooseGameType();
 		int numPlayers = gameUI.chooseNumberOfPlayers();
 
-		//  Model setup
-		Deck deck = new Deck(new ArrayList<>(), new SecureRandom(),
-				chosenType, 0, maxDeckSize, instantiator);
+		Deck deck = new Deck(
+				new ArrayList<>(),
+				new SecureRandom(),
+				chosenType,
+				0,
+				maxDeckSize,
+				instantiator
+		);
 
 		Player[] players = new Player[numPlayers];
 		for (int i = 0; i < numPlayers; i++) {
 			players[i] = new Player(i, instantiator);
 		}
-
 
 		int[] turnTracker = new int[numPlayers];
 		for (int i = 0; i < numPlayers; i++) {
@@ -40,7 +42,7 @@ public class Main {
 		}
 
 		Game game = new Game(
-				0,
+				numPlayers,
 				chosenType,
 				deck,
 				players,
@@ -49,39 +51,56 @@ public class Main {
 				turnTracker
 		);
 
-		//  Initial cards / deck setup
+		// Make sure Game & Deck know the number of players
+		game.setNumberOfPlayers(numPlayers);
+
 		// Give each player a DEFUSE
 		for (int playerCounter = 0; playerCounter < game.getNumberOfPlayers(); playerCounter++) {
-			game.getPlayerAtIndex(playerCounter).addDefuse(new Card(CardType.DEFUSE));
+			game.getPlayerAtIndex(playerCounter)
+					.addDefuse(new Card(CardType.DEFUSE));
 		}
 
+		// Initialize and shuffle the deck
 		game.getDeck().initializeDeck();
 		game.getDeck().shuffleDeck();
 
+		// Deal starting hands (5 cards each)
 		final int cardDrawnPerPlayer = 5;
-		for (int cardDrawnCounter = 0;
-			 cardDrawnCounter < cardDrawnPerPlayer; cardDrawnCounter++) {
+		for (int cardDrawnCounter = 0; cardDrawnCounter < cardDrawnPerPlayer; cardDrawnCounter++) {
 			for (int playerCtr = 0; playerCtr < game.getNumberOfPlayers(); playerCtr++) {
 				Player current = game.getPlayerAtIndex(playerCtr);
 				current.addCardToHand(game.getDeck().drawCard());
 			}
 		}
 
-		// Insert Exploding / Imploding kittens based on game type
+		// Insert Exploding / Imploding Kittens according to game mode
 		if (game.getGameType() == GameType.STREAKING_KITTENS) {
-			game.getDeck().insertCard(CardType.EXPLODING_KITTEN,
-					game.getNumberOfPlayers(), false);
+			game.getDeck().insertCard(
+					CardType.EXPLODING_KITTEN,
+					game.getNumberOfPlayers(),
+					false
+			);
 		} else {
-			game.getDeck().insertCard(CardType.EXPLODING_KITTEN,
-					game.getNumberOfPlayers() - 1, false);
-		}
-		if (game.getGameType() == GameType.IMPLODING_KITTENS) {
-			game.getDeck().insertCard(CardType.IMPLODING_KITTEN,
-					1, false);
+			game.getDeck().insertCard(
+					CardType.EXPLODING_KITTEN,
+					game.getNumberOfPlayers() - 1,
+					false
+			);
 		}
 
+		if (game.getGameType() == GameType.IMPLODING_KITTENS) {
+			game.getDeck().insertCard(
+					CardType.IMPLODING_KITTEN,
+					1,
+					false
+			);
+		}
+
+		// Initial shuffle
 		game.playShuffle(1);
+
+		// Hand control to the controller
+		GameController controller = new GameController(game, gameUI);
+		controller.runGame();
 	}
 }
-
-

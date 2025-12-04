@@ -35,7 +35,7 @@ public class Main {
 				new ArrayList<Integer>(), turnTracker);
 		GameUI gameUI = new GameUI(game);
 		gameUI.chooseLanguage();
-		gameUI.chooseGame();
+		gameUI.chooseGameType();
 		gameUI.chooseNumberOfPlayers();
 		for (int playerCounter = 0; playerCounter <
 				game.getNumberOfPlayers(); playerCounter++) {

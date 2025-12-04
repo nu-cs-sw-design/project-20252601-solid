@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.nio.charset.StandardCharsets;
 
-import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 
 
 public class GameUI {
@@ -53,7 +52,7 @@ public class GameUI {
 		}
 	}
 
-	public void chooseGame() {
+	public GameType chooseGameType() {
 		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
 		final String gameModePrompt = messages.getString("gameModePrompt");
 		final String gameModeExplodingOption =
@@ -75,28 +74,20 @@ public class GameUI {
 			String userInput = scanner.nextLine();
 			switch (userInput) {
 				case "1":
-					game.retrieveGameMode(GameType.EXPLODING_KITTENS);
-					final String gameModeExploding =
-							messages.getString("gameModeExploding");
-					System.out.println(gameModeExploding);
-					return;
+					System.out.println(messages.getString("gameModeExploding"));
+					return GameType.EXPLODING_KITTENS;
 				case "2":
-					game.retrieveGameMode(GameType.IMPLODING_KITTENS);
-					final String gameModeImploding =
-							messages.getString("gameModeImploding");
-					System.out.println(gameModeImploding);
-					return;
+					System.out.println(messages.getString("gameModeImploding"));
+					return GameType.IMPLODING_KITTENS;
 				case "3":
-					game.retrieveGameMode(GameType.STREAKING_KITTENS);
-					final String gameModeStreaking =
-							messages.getString("gameModeStreaking");
-					System.out.println(gameModeStreaking);
-					return;
+					System.out.println(messages.getString("gameModeStreaking"));
+					return GameType.STREAKING_KITTENS;
 				default:
 					System.out.println(gameModeInvalid);
 			}
 		}
 	}
+
 
 	public void chooseNumberOfPlayers() {
 		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
@@ -1733,9 +1724,10 @@ public class GameUI {
 	// Show whose turn it is, their hand, and how many turns they have
 	public void displayTurnStart(Player player, List<Card> hand, int turns) {
 		// Use existing messages if available; otherwise safe defaults
-		String divider = messages.containsKey("dividerLine")
+		String divider = (messages != null && messages.containsKey("dividerLine"))
 				? messages.getString("dividerLine")
 				: "--------------------------------------------------";
+
 		System.out.println(divider);
 
 		// We assume playerID is meaningful to show
@@ -1812,27 +1804,6 @@ public class GameUI {
 		}
 	}
 
-	String invalidInput = messages != null && messages.containsKey("invalidInput")
-			? messages.getString("invalidInput")
-			: "Invalid input. Please try again.";
-
-        System.out.println(endTurnPrompt);
-        System.out.println(optionYes);
-        System.out.println(optionNo);
-
-        while(true)
-
-	{
-		System.out.println(typeOptionPrompt);
-		String input = scanner.nextLine().trim();
-		if ("1".equals(input)) {
-			return true;   // yes, end turn
-		}
-		if ("2".equals(input)) {
-			return false;  // no, keep playing
-		}
-		System.out.println(invalidInput);
-	}
 
 
 	// Ask whether to play a special combo (controller will decide what to do)
@@ -1940,7 +1911,10 @@ public class GameUI {
 		}
 	}
 
-
+	// Generic error printing for the controller
+	public void displayError(String message) {
+		System.out.println("Error: " + message);
+	}
 
 
 

@@ -1,5 +1,7 @@
 package domain.game;
 
+import model.Card;
+import model.CardType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

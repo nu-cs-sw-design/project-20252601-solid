@@ -1,5 +1,9 @@
 package domain.game;
 
+import model.Card;
+import model.CardType;
+import model.Instantiator;
+import model.Player;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -16,7 +16,6 @@ package model {
                players: Player[],
                rand: Random)
 
-        + startNewGame(gameType: GameType, numPlayers: int): void
         + getCurrentPlayer(): Player
         + getCurrentPlayerHand(): List<Card>
         + playCardAtIndex(index: int): void
@@ -111,7 +110,7 @@ package model {
         + getHand(): List<Card>
     }
 
-    abstract class Card {
+    class Card {
         - cardType: CardType
         - isMarked: boolean
         - isFacedUp: boolean
@@ -167,17 +166,39 @@ package model {
         - turnTracker: int[]
         - attacked: boolean
 
-        + TurnManager(numberOfPlayers: int)
+        + TurnManager(numberOfPlayers: int,
+                      attackQueue: List<Integer>,
+                      turnTracker: int[])
 
         + getCurrentPlayerIndex(): int
+        + setCurrentPlayerIndex(index: int): void
+
         + getCurrentTurns(): int
-        + startTurn(): void
-        + endTurn(): void
-        + applySkip(superSkip: boolean): void
-        + queueAttack(targetPlayerIndex: int): void
-        + processAttackQueue(): void
+        + setCurrentTurns(turns: int): void
+        + decrementTurns(): void
+        + hasNoTurnsLeft(): boolean
+
+        + isReversed(): boolean
+        + toggleReversed(): void
+
+        + addAttack(attack: int): void
+        + removeAttack(): int
         + isAttackQueueEmpty(): boolean
+
+        + getAttackCounter(): int
+        + setAttackCounter(counter: int): void
+        + getNumberOfAttacks(): int
+        + incrementNumberOfAttacks(): void
+        + resetNumberOfAttacks(): void
+
+        + getTurnTracker(): int[]
+        + resetTurnsFromTrackerForCurrentPlayer(): void
+        + getTurnCountOfPlayer(playerIndex: int): int
+
+        + getAttacked(): boolean
+        + setAttacked(attacked: boolean): void
     }
+
 
 
     Game --> "*" Player

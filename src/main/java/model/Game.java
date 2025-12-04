@@ -1,13 +1,13 @@
-package domain.game;
+package model;
 
 import java.util.List;
 import java.util.Random;
 
 public class Game {
 	private int numberOfPlayers;
-	private domain.game.GameType gameType;
-	private domain.game.Deck deck;
-	private domain.game.Player[] players;
+	private GameType gameType;
+	private Deck deck;
+	private Player[] players;
 	private Random rand;
 
 	private TurnManager turnManager;
@@ -53,7 +53,7 @@ public class Game {
 	}
 
 	public Card stealRandomCard(int playerToStealFrom) {
-		domain.game.Player player = players[playerToStealFrom];
+		Player player = players[playerToStealFrom];
 		if (checkPlayerHandEmpty(player)) {
 			throw new IllegalArgumentException(PLAYER_HAND_EMPTY_EXCEPTION);
 		}
@@ -236,7 +236,7 @@ public class Game {
 		deck.chooseGameType(gameType);
 	}
 
-	public domain.game.Player selectRandomPlayer() {
+	public Player selectRandomPlayer() {
 		int randomPlayerIndex = rand.nextInt(numberOfPlayers);
 		if (hasZeroPlayers()) {
 			throw new UnsupportedOperationException(NO_PLAYERS_EXCEPTION);
@@ -307,7 +307,7 @@ public class Game {
 		return gameType;
 	}
 
-	public domain.game.Player getPlayerAtIndex(int playerIndex) {
+	public Player getPlayerAtIndex(int playerIndex) {
 		return players[playerIndex];
 	}
 
@@ -362,7 +362,7 @@ public class Game {
 	public int checkNumberOfAlivePlayers() {
 		int counter = 0;
 		for (int playerIndex = 0; playerIndex < numberOfPlayers; playerIndex++) {
-			domain.game.Player player = getPlayerAtIndex(playerIndex);
+			Player player = getPlayerAtIndex(playerIndex);
 			if (!player.getIsDead()) {
 				counter++;
 			}
@@ -461,7 +461,7 @@ public class Game {
 		return deck.getDeckSize() <= 1;
 	}
 
-	private boolean checkPlayerHandEmpty(domain.game.Player player) {
+	private boolean checkPlayerHandEmpty(Player player) {
 		return player.getHandSize() == 0;
 	}
 

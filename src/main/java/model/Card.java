@@ -1,11 +1,11 @@
-package domain.game;
+package model;
 
 public class Card {
 	private CardType cardType;
 	private boolean isMarked;
 	private boolean isFacedUp;
 
-	public Card(domain.game.CardType cardType) {
+	public Card(CardType cardType) {
 		this.isMarked = false;
 		this.cardType = cardType;
 		this.isFacedUp = false;

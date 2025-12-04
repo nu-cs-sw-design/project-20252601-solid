@@ -1,5 +1,6 @@
 package domain.game;
 
+import model.*;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

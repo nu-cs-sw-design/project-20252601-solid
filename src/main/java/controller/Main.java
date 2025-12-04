@@ -1,12 +1,13 @@
-package ui;
+package controller;
 
-import domain.game.Instantiator;
-import domain.game.Card;
-import domain.game.CardType;
-import domain.game.Deck;
-import domain.game.Game;
-import domain.game.GameType;
-import domain.game.Player;
+import model.Instantiator;
+import model.Card;
+import model.CardType;
+import model.Deck;
+import model.Game;
+import model.GameType;
+import model.Player;
+import view.GameUI;
 
 import java.util.ArrayList;
 import java.security.SecureRandom;
@@ -21,7 +22,7 @@ public class Main {
 		final int maxDeckSize = 42;
 		Instantiator instantiator = new Instantiator();
 
-		Deck deck = new domain.game.Deck(new ArrayList<>(), new SecureRandom(),
+		Deck deck = new Deck(new ArrayList<>(), new SecureRandom(),
 				GameType.NONE, 0, maxDeckSize, instantiator);
 		Player[] players = {new Player(playerIDZero, instantiator),
 				new Player(playerIDOne, instantiator),

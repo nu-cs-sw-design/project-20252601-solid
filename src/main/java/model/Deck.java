@@ -1,4 +1,4 @@
-package domain.game;
+package model;
 
 import java.util.List;
 import java.util.Random;
@@ -26,7 +26,7 @@ public class Deck {
 
 
 	public Deck(List<Card> deck, Random rand,
-				domain.game.GameType gameType, int numberOfPlayers, int maxDeckSize,
+				GameType gameType, int numberOfPlayers, int maxDeckSize,
 				Instantiator instantiator) {
 		this.deck = deck;
 		this.rand = rand;
@@ -141,7 +141,7 @@ public class Deck {
 		this.numberOfPlayers = numberOfPlayers;
 	}
 
-	public void chooseGameType(domain.game.GameType gameType) {
+	public void chooseGameType(GameType gameType) {
 		this.gameType = gameType;
 	}
 

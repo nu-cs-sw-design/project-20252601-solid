@@ -1,6 +1,6 @@
-package ui;
+package view;
 
-import domain.game.*;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

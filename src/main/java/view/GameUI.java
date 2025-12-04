@@ -1919,6 +1919,28 @@ public class GameUI {
 		}
 	}
 
+	// Show game over and the winner
+	public void displayGameOver(Player winner) {
+		String gameOver = messages != null && messages.containsKey("gameOverMessage")
+				? messages.getString("gameOverMessage")
+				: "Game over!";
+		System.out.println(gameOver);
+
+		if (winner != null) {
+			// If you have a localized winner key, use it; otherwise simple fallback
+			if (messages != null && messages.containsKey("winnerMessage")) {
+				String winnerMsg = MessageFormat.format(
+						messages.getString("winnerMessage"),
+						winner.getPlayerID()
+				);
+				System.out.println(winnerMsg);
+			} else {
+				System.out.println("Winner is player " + winner.getPlayerID());
+			}
+		}
+	}
+
+
 
 
 

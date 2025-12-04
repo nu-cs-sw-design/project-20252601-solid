@@ -1895,6 +1895,33 @@ public class GameUI {
 		}
 	}
 
+	// Show the cards for "See the Future"
+	public void displaySeeTheFuture(List<Card> cards) {
+		if (cards == null || cards.isEmpty()) {
+			System.out.println("You see nothing in the future… (no cards to show)");
+			return;
+		}
+
+		String header = messages != null && messages.containsKey("futureCards")
+				? messages.getString("futureCards")
+				: "You peek at the top {0} card(s) of the deck.";
+		String singleCardFmt = messages != null && messages.containsKey("futureCard")
+				? messages.getString("futureCard")
+				: "Card: {0}";
+
+		String formattedHeader = MessageFormat.format(header, cards.size());
+		System.out.println(formattedHeader);
+
+		for (Card c : cards) {
+			String name = getLocalizedCardType(c.getCardType());
+			String line = MessageFormat.format(singleCardFmt, name);
+			System.out.println(line);
+		}
+	}
+
+
+
+
 }
 
 

@@ -1727,5 +1727,52 @@ public class GameUI {
 	private boolean checkIfGreaterThanMaxIndexDeck(int indexToInsert) {
 		return indexToInsert > game.getDeck().getDeckSize();
 	}
+
+	// Show whose turn it is, their hand, and how many turns they have
+	public void displayTurnStart(Player player, List<Card> hand, int turns) {
+		// Use existing messages if available; otherwise safe defaults
+		String divider = messages.containsKey("dividerLine")
+				? messages.getString("dividerLine")
+				: "--------------------------------------------------";
+		System.out.println(divider);
+
+		// We assume playerID is meaningful to show
+		int playerId = player.getPlayerID();
+		if (messages != null && messages.containsKey("currentPlayerTurn")) {
+			String msg = MessageFormat.format(
+					messages.getString("currentPlayerTurn"),
+					playerId
+			);
+			System.out.println(msg);
+		} else {
+			System.out.println("It is currently player " + playerId + "'s turn.");
+		}
+
+		// Print hand
+		StringBuilder handMsg = new StringBuilder();
+		if (messages != null && messages.containsKey("playerHand")) {
+			handMsg.append(messages.getString("playerHand"));
+		} else {
+			handMsg.append("They have a hand of:");
+		}
+
+		for (Card c : hand) {
+			handMsg.append(" ").append(getLocalizedCardType(c.getCardType()));
+		}
+		System.out.println(handMsg);
+
+		// Print remaining turns
+		if (messages != null && messages.containsKey("playerTurnsMessage")) {
+			String turnMsg = MessageFormat.format(
+					messages.getString("playerTurnsMessage"),
+					turns
+			);
+			System.out.println(turnMsg);
+		} else {
+			System.out.println("Player currently has " + turns + " more turns.");
+		}
+
+
+	}
 }
 

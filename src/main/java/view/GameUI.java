@@ -1771,8 +1771,45 @@ public class GameUI {
 		} else {
 			System.out.println("Player currently has " + turns + " more turns.");
 		}
-
-
 	}
+
+	// Ask the user if they want to end their turn (no game logic here)
+	public boolean promptEndTurn() {
+		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+
+		String endTurnPrompt = messages != null && messages.containsKey("endTurnPrompt")
+				? messages.getString("endTurnPrompt")
+				: "Do you want to end your turn?";
+		String optionYes = messages != null && messages.containsKey("optionYes")
+				? messages.getString("optionYes")
+				: "1. Yes";
+		String optionNo = messages != null && messages.containsKey("optionNo")
+				? messages.getString("optionNo")
+				: "2. No";
+		String typeOptionPrompt = messages != null && messages.containsKey("typeOptionPrompt")
+				? messages.getString("typeOptionPrompt")
+				: "Please type 1 or 2.";
+		String invalidInput = messages != null && messages.containsKey("invalidInput")
+				? messages.getString("invalidInput")
+				: "Invalid input. Please try again.";
+
+		System.out.println(endTurnPrompt);
+		System.out.println(optionYes);
+		System.out.println(optionNo);
+
+		while (true) {
+			System.out.println(typeOptionPrompt);
+			String input = scanner.nextLine().trim();
+			if ("1".equals(input)) {
+				return true;   // yes, end turn
+			}
+			if ("2".equals(input)) {
+				return false;  // no, keep playing
+			}
+			System.out.println(invalidInput);
+		}
+	}
+
+
 }
 

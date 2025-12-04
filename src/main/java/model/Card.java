@@ -1,7 +1,7 @@
 package model;
 
-public class Card {
-	private CardType cardType;
+public abstract class Card {
+	private final CardType cardType;
 	private boolean isMarked;
 	private boolean isFacedUp;
 
@@ -31,8 +31,6 @@ public class Card {
 		return isFacedUp;
 	}
 
-	public void play(Game game, Player currentPlayer) {
-
-	}
+	public abstract void play(Game game, Player currentPlayer);
 }
 

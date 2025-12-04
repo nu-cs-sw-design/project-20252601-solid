@@ -1,5 +1,4 @@
-package controller;
-
+import controller.GameController;
 import model.Instantiator;
 import model.Card;
 import model.CardType;

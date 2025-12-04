@@ -217,41 +217,41 @@ public class GameUI {
 
 
 	// Ask whether to play a special combo (controller will decide what to do)
-	public boolean promptPlaySpecialCombo() {
-		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
-
-		String specialComboPrompt = messages != null && messages.containsKey("specialComboPrompt")
-				? messages.getString("specialComboPrompt")
-				: "Would you like to play a special combo?";
-		String optionYes = messages != null && messages.containsKey("optionYes")
-				? messages.getString("optionYes")
-				: "1. Yes";
-		String optionNo = messages != null && messages.containsKey("optionNo")
-				? messages.getString("optionNo")
-				: "2. No";
-		String optionsPrompt = messages != null && messages.containsKey("optionsPrompt")
-				? messages.getString("optionsPrompt")
-				: "Enter 1 or 2: ";
-		String invalidInput = messages != null && messages.containsKey("invalidInput")
-				? messages.getString("invalidInput")
-				: "Invalid input. Please try again.";
-
-		System.out.println(specialComboPrompt);
-		System.out.println(optionYes);
-		System.out.println(optionNo);
-
-		while (true) {
-			System.out.print(optionsPrompt);
-			String input = scanner.nextLine().trim();
-			if ("1".equals(input)) {
-				return true;
-			}
-			if ("2".equals(input)) {
-				return false;
-			}
-			System.out.println(invalidInput);
-		}
-	}
+//	public boolean promptPlaySpecialCombo() {
+//		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+//
+//		String specialComboPrompt = messages != null && messages.containsKey("specialComboPrompt")
+//				? messages.getString("specialComboPrompt")
+//				: "Would you like to play a special combo?";
+//		String optionYes = messages != null && messages.containsKey("optionYes")
+//				? messages.getString("optionYes")
+//				: "1. Yes";
+//		String optionNo = messages != null && messages.containsKey("optionNo")
+//				? messages.getString("optionNo")
+//				: "2. No";
+//		String optionsPrompt = messages != null && messages.containsKey("optionsPrompt")
+//				? messages.getString("optionsPrompt")
+//				: "Enter 1 or 2: ";
+//		String invalidInput = messages != null && messages.containsKey("invalidInput")
+//				? messages.getString("invalidInput")
+//				: "Invalid input. Please try again.";
+//
+//		System.out.println(specialComboPrompt);
+//		System.out.println(optionYes);
+//		System.out.println(optionNo);
+//
+//		while (true) {
+//			System.out.print(optionsPrompt);
+//			String input = scanner.nextLine().trim();
+//			if ("1".equals(input)) {
+//				return true;
+//			}
+//			if ("2".equals(input)) {
+//				return false;
+//			}
+//			System.out.println(invalidInput);
+//		}
+//	}
 
 	// Ask which card index to play
 	public int promptPlayCardIndex() {
@@ -405,6 +405,36 @@ public class GameUI {
 		String line = MessageFormat.format(tmpl, player.getPlayerID());
 		System.out.println(line);
 	}
+
+	public boolean promptPlayNope(Player reactingPlayer, CardType pendingType) {
+		Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+
+		String prompt = (messages != null && messages.containsKey("nopePrompt"))
+				? messages.getString("nopePrompt")
+				: "Player {0}, do you want to play NOPE against {1}? (1 = Yes, 2 = No)";
+
+		System.out.println(MessageFormat.format(
+				prompt,
+				reactingPlayer.getPlayerID(),
+				pendingType.name()
+		));
+
+		String invalid = (messages != null && messages.containsKey("invalidInput"))
+				? messages.getString("invalidInput")
+				: "Invalid input. Please try again.";
+
+		while (true) {
+			String input = scanner.nextLine().trim();
+			if ("1".equals(input)) {
+				return true;
+			}
+			if ("2".equals(input)) {
+				return false;
+			}
+			System.out.println(invalid);
+		}
+	}
+
 
 
 	// Generic error printing for the controller

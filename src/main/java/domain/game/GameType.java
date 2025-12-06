@@ -1,4 +1,5 @@
-package model;
+
+package domain.game;
 
 public enum GameType {
 	NONE,

@@ -1,6 +1,5 @@
 package domain.game;
 
-import model.*;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,30 +21,56 @@ public class GameTest {
 	private final static int FIFTY_SIX_DECK_SIZE = 56;
 	private final static int SIXTY_TWO_DECK_SIZE = 62;
 
+
+//	public void selectRandomPlayerNoPlayers() {
+//
+//		Random rand = EasyMock.createMock(Random.class);
+//		EasyMock.expect(rand.nextInt(0)).andReturn(0);
+//		EasyMock.replay(rand);
+//		Deck deck = EasyMock.createMock(Deck.class);
+//		ArrayList<Integer> attackQueue = EasyMock.createMock(ArrayList.class);
+//
+//		Player [] players = {};
+//		GameType gameType = GameType.EXPLODING_KITTENS;
+//
+//		int[] turnTracker = {1, 1, 1, 1, 1};
+//		Game game = new Game(0, gameType, deck, players, rand,
+//				attackQueue, turnTracker);
+//
+//
+//		try {
+//			game.selectRandomPlayer();
+//		} catch (UnsupportedOperationException e) {
+//			assertEquals(e.getMessage(), "No players to select from.");
+//		}
+//		EasyMock.verify(rand);
+//	}
+
 	@Test
 	public void selectRandomPlayerNoPlayers() {
-
 		Random rand = EasyMock.createMock(Random.class);
-		EasyMock.expect(rand.nextInt(0)).andReturn(0);
-		EasyMock.replay(rand);
+		EasyMock.replay(rand); // no expectations; we expect it NOT to be called
+
 		Deck deck = EasyMock.createMock(Deck.class);
+		@SuppressWarnings("unchecked")
 		ArrayList<Integer> attackQueue = EasyMock.createMock(ArrayList.class);
 
-		Player [] players = {};
+		Player[] players = {};
 		GameType gameType = GameType.EXPLODING_KITTENS;
-
 		int[] turnTracker = {1, 1, 1, 1, 1};
-		Game game = new Game(0, gameType, deck, players, rand,
-				attackQueue, turnTracker);
 
+		Game game = new Game(0, gameType, deck, players, rand, attackQueue, turnTracker);
 
-		try {
-			game.selectRandomPlayer();
-		} catch (UnsupportedOperationException e) {
-			assertEquals(e.getMessage(), "No players to select from.");
-		}
+		UnsupportedOperationException thrown =
+				assertThrows(UnsupportedOperationException.class, game::selectRandomPlayer);
+
+		assertEquals("No players to select from.", thrown.getMessage());
+
+		// Verify that we didn't accidentally call any unexpected methods on rand
 		EasyMock.verify(rand);
 	}
+
+
 
 	@Test
 	public void selectRandomPlayerOnePlayer() {

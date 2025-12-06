@@ -1,4 +1,5 @@
-package model;
+// File: src/main/java/domain/game/CardType.java
+package domain.game;
 
 public enum CardType {
 	NOPE(GameType.EXPLODING_KITTENS),
@@ -30,5 +31,9 @@ public enum CardType {
 
 	CardType(GameType gameType) {
 		this.gameType = gameType;
+	}
+
+	public GameType getGameType() {
+		return gameType;
 	}
 }

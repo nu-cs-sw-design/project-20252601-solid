@@ -1,8 +1,7 @@
-package model;
+package domain.game;
 
 import java.util.List;
 import java.util.Random;
-import java.util.ArrayList;
 
 public class Deck {
 	private List<Card> deck;
@@ -14,19 +13,19 @@ public class Deck {
 
 	private static final String DECK_FULL_EXCEPTION = "Deck is full, cannot insert more cards.";
 	private static final String DRAW_FROM_EMPTY_DECK_EXCEPTION =
-		"Cannot draw card from empty deck.";
+			"Cannot draw card from empty deck.";
 	private static final String NEGATIVE_INDEX_EXCEPTION =
-		"Invalid index. Cannot insert into negative index.";
+			"Invalid index. Cannot insert into negative index.";
 	private static final String INDEX_GREATER_THAN_DECK_SIZE_EXCEPTION =
-		"Invalid index. Cannot insert into index greater than deck size.";
+			"Invalid index. Cannot insert into index greater than deck size.";
 	private static final String MISMATCH_ORDER_SIZE_EXCEPTION =
-		"Mismatch: The number of indices (%d) does not match the number of cards (%d).";
+			"Mismatch: The number of indices (%d) does not match the number of cards (%d).";
 	private static final String INDEX_OUT_OF_RANGE_EXCEPTION =
-		"Index out of range: %d. Valid range is 0 to %d.";
+			"Index out of range: %d. Valid range is 0 to %d.";
 
 
 	public Deck(List<Card> deck, Random rand,
-				GameType gameType, int numberOfPlayers, int maxDeckSize,
+				domain.game.GameType gameType, int numberOfPlayers, int maxDeckSize,
 				Instantiator instantiator) {
 		this.deck = deck;
 		this.rand = rand;
@@ -43,6 +42,13 @@ public class Deck {
 	public Card getCardAtIndex(int index) {
 		return deck.get(index);
 	}
+
+	public List<Card> peekTop(int n) {
+		int size = deck.size();
+		int count = Math.min(n, size);
+		return deck.subList(size - count, size);
+	}
+
 
 	public void initializeDeck() {
 		final int cardAddedThreeTimes = 3;
@@ -104,7 +110,7 @@ public class Deck {
 	public void insertCard(CardType cardType, int numberOfCards, boolean bottom) {
 		if (addedOutOfBounds(numberOfCards)) {
 			throw new UnsupportedOperationException
-			(DECK_FULL_EXCEPTION);
+					(DECK_FULL_EXCEPTION);
 		}
 		if (!bottom) {
 			for (int i = 0; i < numberOfCards; i++) {
@@ -120,7 +126,7 @@ public class Deck {
 	public Card drawCard() {
 		if (this.deck.isEmpty()) {
 			throw new UnsupportedOperationException
-			(DRAW_FROM_EMPTY_DECK_EXCEPTION);
+					(DRAW_FROM_EMPTY_DECK_EXCEPTION);
 		}
 		else {
 			return this.deck.remove(this.deck.size() - 1);
@@ -141,7 +147,7 @@ public class Deck {
 		this.numberOfPlayers = numberOfPlayers;
 	}
 
-	public void chooseGameType(GameType gameType) {
+	public void chooseGameType(domain.game.GameType gameType) {
 		this.gameType = gameType;
 	}
 
@@ -181,7 +187,7 @@ public class Deck {
 	public void reorderDeckCards(int[] newOrderIndices, List<Card> cardsToReorder) {
 		if (newOrderIndices.length != cardsToReorder.size()) {
 			final String
-				MISMATCH_ORDER_SIZE_EXCEPTION_MESSAGE =
+					MISMATCH_ORDER_SIZE_EXCEPTION_MESSAGE =
 					String.format(MISMATCH_ORDER_SIZE_EXCEPTION,
 							newOrderIndices.length,
 							cardsToReorder.size());
@@ -191,7 +197,7 @@ public class Deck {
 		for (int index : newOrderIndices) {
 			if (checkIfIndexOutOfRange(index)) {
 				final String
-					INDEX_OUT_OF_RANGE_EXCEPTION_MESSAGE =
+						INDEX_OUT_OF_RANGE_EXCEPTION_MESSAGE =
 						String.format(INDEX_OUT_OF_RANGE_EXCEPTION,
 								index, deck.size() - 1);
 				throw new IndexOutOfBoundsException
@@ -216,20 +222,4 @@ public class Deck {
 		return index < 0 || index >= deck.size();
 	}
 
-	public List<Card> peekTopCards(int count) {
-		// Return a view of the top `count` cards without removing them.
-		List<Card> topCards = new ArrayList<>();
-		int deckSize = deck.size();
-		int numToReturn = Math.min(count, deckSize);
-
-		// Top of deck is the last element (same as drawCard)
-		int startIndex = deckSize - numToReturn;
-		for (int i = startIndex; i < deckSize; i++) {
-			topCards.add(deck.get(i));
-		}
-		return topCards;
-	}
-
-
 }
-

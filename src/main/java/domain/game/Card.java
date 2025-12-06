@@ -1,7 +1,7 @@
-package model;
+package domain.game;
 
-public abstract class Card {
-	private final CardType cardType;
+public class Card {
+	private CardType cardType;
 	private boolean isMarked;
 	private boolean isFacedUp;
 
@@ -30,7 +30,4 @@ public abstract class Card {
 	public boolean checkIfFacedUp() {
 		return isFacedUp;
 	}
-
-	public abstract void play(Game game, Player currentPlayer);
 }
-

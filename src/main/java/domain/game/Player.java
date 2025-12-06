@@ -1,4 +1,5 @@
-package model;
+
+package domain.game;
 
 import java.util.List;
 import java.util.Random;
@@ -108,10 +109,6 @@ public class Player {
 
 	public void setCursed(boolean isCursed) {
 		this.isCursed = isCursed;
-	}
-
-	public List<Card> getHand() {
-		return hand;
 	}
 
 }

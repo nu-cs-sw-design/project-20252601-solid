@@ -1,5 +1,6 @@
 @startuml
-package model {
+
+package domain.game {
 
     class Game {
         - numberOfPlayers: int
@@ -7,82 +8,89 @@ package model {
         - deck: Deck
         - players: Player[]
         - rand: Random
-        - turnManager: TurnManager
-
+        - currentPlayerTurn: int
+        - currentPlayerNumberOfTurns: int
+        - isReversed: boolean
+        - attackQueue: List<Integer>
+        - attackCounter: int
+        - numberOfAttacks: int
+        - turnTracker: int[]
+        - attacked: boolean
+        - discardPile: DiscardPile
 
         + Game(numberOfPlayers: int,
                gameType: GameType,
                deck: Deck,
                players: Player[],
-               rand: Random)
-
-        + getCurrentPlayer(): Player
-        + getCurrentPlayerHand(): List<Card>
-        + playCardAtIndex(index: int): void
-        + endTurn(): void
-        + isGameOver(): boolean
+               rand: Random,
+               attackQueue: List<Integer>,
+               turnTracker: int[])
 
         + getNumberOfPlayers(): int
         + getGameType(): GameType
         + getDeck(): Deck
+        + getDiscardPile(): DiscardPile
         + getPlayerAtIndex(playerIndex: int): Player
+        + getPlayerTurn(): int
+        + getNumberOfTurns(): int
+        + setNumberOfPlayers(numberOfPlayers: int): void
+
+        + drawCard(): Card
+        + drawFromBottom(): Card
+        + getDeckSize(): int
+        + getCardAtIndex(cardIndex: int): Card
+
+        + playExplodingKitten(playerIndex: int): boolean
+        + playDefuse(idxToInsert: int, playerIndex: int): void
+        + playShuffle(numberOfShuffles: int): void
+        + playSkip(superSkip: boolean): int
+        + playReverse(): void
+        + playMark(playerIndex: int, cardIndex: int): void
+
         + checkNumberOfAlivePlayers(): int
+        + incrementPlayerTurn(): void
+        + decrementNumberOfTurns(): void
+        + setCurrentPlayerNumberOfTurns(turns: int): void
+        + setTurnToTargetedIndexIfAttackOccurred(): void
+        + checkIfPlayerDead(playerIndex: int): boolean
+        + checkIfPlayerHasCard(playerIndex: int, cardType: CardType): boolean
     }
 
     Game --> Deck
-    Game --> TurnManager
+    Game --> " *" Player
     Game --> GameType
+    Game --> DiscardPile
 
+    class Deck {
+        - deck: List<Card>
+        - rand: Random
+        - gameType: GameType
+        - numberOfPlayers: int
+        - maxDeckSize: int
+        - instantiator: Instantiator
 
-    class Deck{
-        -deck: List<Card>
-        -rand: Random
-        -gameType: GameType
-        -numberOfPlayers: int
-        -maxDeckSize: int
-        -instantiator: Instantiator
+        + Deck(deck: List<Card>, rand: Random,
+               gameType: GameType, numberOfPlayers: int,
+               maxDeckSize: int, instantiator: Instantiator)
 
-        -DECK_FULL_EXCEPTION: String
-        -DRAW_FROM_EMPTY_DECK_EXCEPTION: String
-        -NEGATIVE_INDEX_EXCEPTION: String
-        -INDEX_GREATER_THAN_DECK_SIZE_EXCEPTION: String
-        -MISMATCH_ORDER_SIZE_EXCEPTION: String
-        -INDEX_OUT_OF_RANGE_EXCEPTION: String
-
-        +Deck(deck: List<Card>, rand: Random,
-              gameType: GameType, numberOfPlayers: int,
-              maxDeckSize: int, instantiator: Instantiator)
-
-        +getDeckSize(): int
-        +getCardAtIndex(index: int): Card
-        +initializeDeck(): void
-        +shuffleDeck(): void
-        +insertCard(cardType: CardType, numberOfCards: int, bottom: boolean): void
-        +drawCard(): Card
-        +drawCardFromBottom(): Card
-        +setNumberOfPlayers(numberOfPlayers: int): void
-        +chooseGameType(gameType: GameType): void
-        +removeBombs(): int
-        +insertExplodingKittenAtIndex(indexToInsert: int): void
-        +insertImplodingKittenAtIndex(indexToInsert: int, card: Card): void
-
-        #getCardTypeAtIndex(index: int): CardType
-
-        +reorderDeckCards(newOrderIndices: int[], cardsToReorder: List<Card>): void
-
-        -addedOutOfBounds(numberOfCards: int): boolean
-        -checkIfExplodingKitten(index: int): boolean
-        -checkIfIndexOutOfRange(index: int): boolean
-
-        +peekTopCards(count: int): List<Card>
-
+        + getDeckSize(): int
+        + getCardAtIndex(index: int): Card
+        + shuffleDeck(): void
+        + insertCard(cardType: CardType, numberOfCards: int, bottom: boolean): void
+        + drawCard(): Card
+        + drawCardFromBottom(): Card
+        + setNumberOfPlayers(numberOfPlayers: int): void
+        + chooseGameType(gameType: GameType): void
+        + removeBombs(): int
+        + insertExplodingKittenAtIndex(indexToInsert: int): void
+        + insertImplodingKittenAtIndex(indexToInsert: int, card: Card): void
+        + reorderDeckCards(newOrderIndices: int[], cardsToReorder: List<Card>): void
     }
 
     Deck --> CardType
     Deck --> GameType
     Deck --> Instantiator
     Deck --> "*" Card
-
 
     class Player {
         - playerID: int
@@ -94,7 +102,6 @@ package model {
         + Player(playerID: int, instantiator: Instantiator)
 
         + getPlayerID(): int
-        + addDefuse(defuse: Card): void
         + addCardToHand(card: Card): void
         + hasCard(cardType: CardType): boolean
         + getHandSize(): int
@@ -107,8 +114,11 @@ package model {
         + setIsDead(): void
         + getIsCursed(): boolean
         + setCursed(isCursed: boolean): void
-        + getHand(): List<Card>
     }
+
+    Player --> " *" Card
+    Player --> CardType
+    Player --> Instantiator
 
     class Card {
         - cardType: CardType
@@ -121,160 +131,150 @@ package model {
         + checkIfMarked(): boolean
         + setFacedUp(): void
         + checkIfFacedUp(): boolean
-        + play(game: Game, currentPlayer: Player): void
     }
-
-
-    class ExplodingKittenCard extends Card {
-        + ExplodingKittenCard()
-        + play(game: Game, currentPlayer: Player): void
-    }
-
-    class NopeCard extends Card {
-        + NopeCard()
-        + play(game: Game, currentPlayer: Player): void
-    }
-
-    class ShuffleCard extends Card {
-        + ShuffleCard()
-        + play(game: Game, currentPlayer: Player): void
-    }
-
-    class SeeTheFutureCard extends Card {
-          - DEFAULT_PEEK_COUNT: int
-          + SeeTheFutureCard()
-          + play(game: Game, currentPlayer: Player): void
-          + getPeekCount(): int
-    }
-
-    Card <|-- ExplodingKittenCard
-    Card <|-- NopeCard
-    Card <|-- ShuffleCard
-    Card <|-- SeeTheFutureCard
-
 
     Card --> CardType
-    Card --> Game
-    Card --> Player
 
+    class DiscardPile {
+        - cards: List<Card>
 
-    class TurnManager {
-        - currentPlayerTurn: int
-        - currentPlayerNumberOfTurns: int
-        - isReversed: boolean
-        - attackQueue: List<Integer>
-        - attackCounter: int
-        - numberOfAttacks: int
-        - turnTracker: int[]
-        - attacked: boolean
-
-        + TurnManager(numberOfPlayers: int,
-                      attackQueue: List<Integer>,
-                      turnTracker: int[])
-
-        + getCurrentPlayerIndex(): int
-        + setCurrentPlayerIndex(index: int): void
-
-        + getCurrentTurns(): int
-        + setCurrentTurns(turns: int): void
-        + decrementTurns(): void
-        + hasNoTurnsLeft(): boolean
-
-        + isReversed(): boolean
-        + toggleReversed(): void
-
-        + addAttack(attack: int): void
-        + removeAttack(): int
-        + isAttackQueueEmpty(): boolean
-
-        + getAttackCounter(): int
-        + setAttackCounter(counter: int): void
-        + getNumberOfAttacks(): int
-        + incrementNumberOfAttacks(): void
-        + resetNumberOfAttacks(): void
-
-        + getTurnTracker(): int[]
-        + resetTurnsFromTrackerForCurrentPlayer(): void
-        + getTurnCountOfPlayer(playerIndex: int): int
-
-        + getAttacked(): boolean
-        + setAttacked(attacked: boolean): void
+        + discard(card: Card): void
+        + size(): int
+        + peekTop(): Card
     }
 
+    DiscardPile --> "*" Card
 
+    interface IGamePrompts {
+        + askExplodingKittenInsertIndex(maxIndex: int): int
+        + showTopCards(active: Player, cards: List<Card>): void
+        + showDeckShuffled(): void
+        + askPlayerWantsToPlayNope(reactingPlayer: Player, originalCard: Card): boolean
+    }
 
-    Game --> "*" Player
+    interface CardEffect {
+        + apply(ctx: CardPlayContext): void
+    }
 
-    Player --> " *" Card
-    Player --> CardType
-    Player --> Instantiator
+    class CardPlayContext {
+        - game: Game
+        - activePlayer: Player
+        - card: Card
+        - prompts: IGamePrompts
 
+        + CardPlayContext(game: Game,
+                          activePlayer: Player,
+                          card: Card,
+                          prompts: IGamePrompts)
 
-     class Instantiator {
-         + createCard(cardType: CardType): Card
-         + createRandom(): Random
-         + createCardList(): List<Card>
-     }
+        + getGame(): Game
+        + getActivePlayer(): Player
+        + getCard(): Card
+        + getPrompts(): IGamePrompts
+        + getDeck(): Deck
+        + getDiscardPile(): DiscardPile
+    }
 
-     enum GameType {
-         NONE
-         EXPLODING_KITTENS
-         STREAKING_KITTENS
-         IMPLODING_KITTENS
-     }
+    CardPlayContext --> Game
+    CardPlayContext --> Player
+    CardPlayContext --> Card
+    CardPlayContext --> IGamePrompts
+    CardPlayContext --> Deck
+    CardPlayContext --> DiscardPile
 
-     enum CardType {
-         NOPE
-         DEFUSE
-         ATTACK
-         SHUFFLE
-         SKIP
-         SEE_THE_FUTURE
-         CAT_ONE
-         CAT_TWO
-         CAT_THREE
-         CAT_FOUR
-         EXPLODING_KITTEN
-         STREAKING_KITTEN
-         SWAP_TOP_AND_BOTTOM
-         GARBAGE_COLLECTION
-         CURSE_OF_THE_CAT_BUTT
-         ALTER_THE_FUTURE
-         CATOMIC_BOMB
-         SUPER_SKIP
-         MARK
-         IMPLODING_KITTEN
-         REVERSE
-         FERAL_CAT
-         TARGETED_ATTACK
-         DRAW_FROM_THE_BOTTOM
-     }
+    class CardEffectRegistry {
+        - effects: Map<CardType, CardEffect>
 
-     Instantiator --> Card
-     Instantiator --> CardType
+        + CardEffectRegistry(game: Game, prompts: IGamePrompts)
+        + getEffect(type: CardType): CardEffect
+    }
+
+    CardEffectRegistry --> CardEffect
+    CardEffectRegistry --> CardType
+
+    class CardPlayService {
+        - game: Game
+        - prompts: IGamePrompts
+        - registry: CardEffectRegistry
+
+        + CardPlayService(game: Game, prompts: IGamePrompts)
+        + playCard(activePlayer: Player, handIndex: int): void
+        - isCanceledByNope(originalCard: Card,
+                           originalPlayer: Player): boolean
+    }
+
+    CardPlayService --> Game
+    CardPlayService --> IGamePrompts
+    CardPlayService --> CardEffectRegistry
+
+    class Instantiator {
+        + createCard(cardType: CardType): Card
+        + createRandom(): Random
+        + createCardList(): List<Card>
+    }
+
+    Instantiator --> Card
+    Instantiator --> CardType
+
+    enum GameType {
+        NONE
+        EXPLODING_KITTENS
+        STREAKING_KITTENS
+        IMPLODING_KITTENS
+    }
+
+    enum CardType {
+        NOPE
+        DEFUSE
+        ATTACK
+        SHUFFLE
+        SKIP
+        SEE_THE_FUTURE
+        CAT_ONE
+        CAT_TWO
+        CAT_THREE
+        CAT_FOUR
+        EXPLODING_KITTEN
+        STREAKING_KITTEN
+        SWAP_TOP_AND_BOTTOM
+        GARBAGE_COLLECTION
+        CURSE_OF_THE_CAT_BUTT
+        ALTER_THE_FUTURE
+        CATOMIC_BOMB
+        SUPER_SKIP
+        MARK
+        IMPLODING_KITTEN
+        REVERSE
+        FERAL_CAT
+        TARGETED_ATTACK
+        DRAW_FROM_THE_BOTTOM
+    }
 }
 
-package view {
+package ui {
 
     class GameUI {
+        - game: Game
+        - messages: ResourceBundle
+        - cardPlayService: CardPlayService
+
+        + GameUI(game: Game)
 
         + chooseLanguage(): void
-        + chooseGameType(): GameType
-        + chooseNumberOfPlayers(): int
+        + chooseGame(): void
+        + chooseNumberOfPlayers(): void
 
-        + displayTurnStart(player: Player,
-                           hand: List<Card>,
-                           turns: int): void
-        + promptPlaySpecialCombo(): boolean
-        + promptPlayCardIndex(): int
-        + promptEndTurn(): boolean
-
-        + displaySeeTheFuture(cards: List<Card>): void
-        + displayGameOver(winner: Player): void
-        + displayError(message: String): void
+        + startTurn(): void
+        + endGame(): void
     }
+
 }
 
+GameUI ..|> IGamePrompts
+GameUI --> Game
+GameUI --> Card
+GameUI --> Player
+GameUI --> CardPlayService
 
 package controller {
 
@@ -283,13 +283,9 @@ package controller {
         - ui: GameUI
 
         + GameController(game: Game, ui: GameUI)
-
         + runGame(): void
-        + playSingleTurn(): void
-
     }
 }
-
 
 class Main {
     + main(args: String[]): void
@@ -297,12 +293,6 @@ class Main {
 
 GameController --> Game
 GameController --> GameUI
-
-GameUI --> GameType
-GameUI --> Player
-GameUI --> Card
-
 Main --> GameController
-
 
 @enduml
